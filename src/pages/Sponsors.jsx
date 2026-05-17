@@ -15,7 +15,7 @@ export default function Sponsors() {
               <span className="apg-hero-script" style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{t('sponsors.tag') || 'Đồng hành · Tài trợ'}</span>
               <h2 className="apg-sec-heading">{t('sponsors.title') || 'Nhà'} <span className="gold-text">{t('sponsors.highlight') || 'tài trợ & đối tác'}</span></h2>
               <div className="apg-gold-rule" style={{ margin: '20px auto 28px' }}></div>
-              <p className="apg-body-text" style={{ maxWidth: '600px', margin: '0 auto' }}>{t('sponsors.desc') || 'Cảm ơn các đối tác đã đồng hành cùng VITA Award 2026 trong hành trình tôn vinh ngành du lịch Việt Nam.'}</p>
+              <p className="apg-body-text" style={{ maxWidth: '600px', margin: '0 auto' }}>{t('sponsors.desc') || 'Cảm ơn các đối tác đã đồng hành cùng VITA Award 2025 trong hành trình tôn vinh ngành du lịch Việt Nam.'}</p>
             </div>
 
             {/* TIER: KIM CƯƠNG */}

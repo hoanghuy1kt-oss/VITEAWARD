@@ -10,10 +10,10 @@
     "vote_now": "Vote Now"
   },
   "hero": {
-    "season": "★ Season 2026",
+    "season": "★ Season 2025",
     "title": "VITA",
     "subtitle": "AWARD",
-    "year": "2026",
+    "year": "2025",
     "award_name": "Tourism Awards",
     "lead": "Honoring values, connecting the future.",
     "scroll": "Scroll to discover",
@@ -26,7 +26,7 @@
     "tag": "Part 01 · About",
     "title": "Introduction",
     "highlight": "VITA Award",
-    "desc": "VITA AWARD is the Vietnam Tourism Award hosted by the Vietnam Tourism Association, in coordination with Vietnam Travel Magazine and strategic partners.",
+    "desc": "VITA AWARD is the Vietnam Tourism Award hosted by Vietnam Travel Magazine, in coordination with agencies and strategic partners.",
     "vision": "Vision",
     "mission": "& Mission",
     "vision_desc1": "To become the iconic award of Vietnam's tourism industry in the new era — a place to honor outstanding values, promote digital transformation & green tourism, and spread the inspiration to explore Vietnam.",
@@ -82,7 +82,7 @@
     "tag": "Results",
     "title": "Live",
     "highlight": "Leaderboard",
-    "desc": "Voting results are updated in real-time. The Gala night on Dec 15, 2026, will announce the official winners.",
+    "desc": "Voting results are updated in real-time. The Gala night on Jul 09, 2026, will announce the official winners.",
     "top_title": "Top Nominees — Destinations",
     "updated": "Last updated: a few seconds ago",
     "live": "LIVE · REALTIME",
@@ -99,7 +99,7 @@
   },
   "events": {
     "tag": "Part 02 · Events",
-    "title": "VITA Award 2026",
+    "title": "VITA Award 2025",
     "highlight": "Journey",
     "desc": "The official roadmap of the season — from nominations launch to the Gala night."
   },
@@ -107,17 +107,17 @@
     "tag": "Companions · Sponsors",
     "title": "Sponsors",
     "highlight": "& Partners",
-    "desc": "Thank you to our partners for accompanying VITA Award 2026 in the journey to honor Vietnam's tourism industry.",
+    "desc": "Thank you to our partners for accompanying VITA Award 2025 in the journey to honor Vietnam's tourism industry.",
     "diamond": "Diamond Sponsors",
     "gold": "Gold Sponsors",
     "silver": "Silver & Media Partners",
-    "become_sponsor": "Become a VITA Award 2026 Sponsor",
+    "become_sponsor": "Become a VITA Award 2025 Sponsor",
     "sponsor_desc": "Accompany the journey to honor Vietnam's tourism industry",
     "contact": "Contact Partners →"
   },
   "footer": {
-    "desc": "Vietnam Tourism Awards 2026 — Honoring values, connecting the future.",
-    "org": "Organizer: Vietnam Tourism Association",
+    "desc": "Vietnam Tourism Awards 2025 — Honoring values, connecting the future.",
+    "org": "Organizer: Vietnam Travel Magazine",
     "media": "Media Sponsor: Vietnam Travel Magazine",
     "links": "Links",
     "support": "Support",
@@ -125,7 +125,7 @@
     "faq": "FAQ",
     "rules": "Award Rules",
     "guide": "Voting Guide",
-    "copyright": "© 2026 VITA Award. All rights reserved. · Designed with ❤️ for Vietnamese Tourism"
+    "copyright": "© 2025 VITA Award. All rights reserved. · Designed with ❤️ for Vietnamese Tourism"
   },
   "auth": {
     "login_title": "Login to",

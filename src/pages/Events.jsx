@@ -15,7 +15,7 @@ export default function Events() {
       dateObj: new Date('2026-11-20'),
       dateStr: '20 Tháng 11, 2026',
       image: '/images/hero-collage.png',
-      title: isEn ? 'VITA Award 2026 Post-Event Exhibition' : 'Triển lãm Hậu sự kiện VITA Award 2026',
+      title: isEn ? 'VITA Award 2025 Post-Event Exhibition' : 'Triển lãm Hậu sự kiện VITA Award 2025',
       desc: isEn ? 'Explore the journey and the glorious moments of this year\'s award season.' : 'Khám phá hành trình và những khoảnh khắc vinh quang của mùa giải năm nay.'
     },
     {
@@ -29,8 +29,8 @@ export default function Events() {
       dateObj: new Date('2026-06-15'),
       dateStr: '15 Tháng 6, 2026',
       image: '/images/hero-collage.png',
-      title: isEn ? 'Gala Night VITA Award 2026 - Honoring Values' : 'Đêm Gala vinh danh VITA Award 2026 - Tôn vinh giá trị',
-      desc: isEn ? 'The grand ceremony to announce and award the winners of VITA Award 2026. Join us for a spectacular night of celebration.' : 'Lễ công bố và trao giải hoành tráng cho những người chiến thắng VITA Award 2026. Hãy tham gia cùng chúng tôi trong một đêm kỷ niệm hoành tráng.'
+      title: isEn ? 'Gala Night VITA Award 2025 - Honoring Values' : 'Đêm Gala vinh danh VITA Award 2025 - Tôn vinh giá trị',
+      desc: isEn ? 'The grand ceremony to announce and award the winners of VITA Award 2025. Join us for a spectacular night of celebration.' : 'Lễ công bố và trao giải hoành tráng cho những người chiến thắng VITA Award 2025. Hãy tham gia cùng chúng tôi trong một đêm kỷ niệm hoành tráng.'
     },
     {
       dateObj: new Date('2026-10-10'),
@@ -58,7 +58,7 @@ export default function Events() {
       dateStr: '15 Tháng 8, 2026',
       image: '/images/Backround.png',
       title: isEn ? 'Press Conference: Unveiling the Finalists' : 'Họp báo: Công bố các Ứng cử viên lọt vào vòng Chung kết',
-      desc: isEn ? 'Join us as we announce the top nominees for the VITA Award 2026.' : 'Hãy tham gia cùng chúng tôi khi công bố những đề cử hàng đầu cho VITA Award 2026.'
+      desc: isEn ? 'Join us as we announce the top nominees for the VITA Award 2025.' : 'Hãy tham gia cùng chúng tôi khi công bố những đề cử hàng đầu cho VITA Award 2025.'
     },
     {
       dateObj: new Date('2026-08-01'),

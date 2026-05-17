@@ -15,7 +15,7 @@ export default function News() {
       dateObj: new Date('2026-05-12'),
       dateStr: '12 Tháng 5, 2026',
       image: '/images/hero-collage.png',
-      title: isEn ? 'VITA Award 2026 sets new records for participation' : 'VITA Award 2026 thiết lập kỷ lục mới về lượng người tham gia',
+      title: isEn ? 'VITA Award 2025 sets new records for participation' : 'VITA Award 2025 thiết lập kỷ lục mới về lượng người tham gia',
       desc: isEn ? 'The tourism community has shown overwhelming support for the new award categories.' : 'Cộng đồng du lịch đã thể hiện sự ủng hộ mạnh mẽ cho các hạng mục giải thưởng mới.'
     },
     {
@@ -29,8 +29,8 @@ export default function News() {
       dateObj: new Date('2026-05-10'),
       dateStr: '10 Tháng 5, 2026',
       image: '/images/hero-collage.png',
-      title: isEn ? 'VITA Award 2026 officially launches — Journey to honor Vietnam tourism' : 'VITA Award 2026 chính thức khởi động — Hành trình tôn vinh ngành du lịch Việt Nam',
-      desc: isEn ? 'The launch ceremony of VITA Award 2026 was solemnly held with the participation of over 200 representatives from travel agencies, destinations, and content creators.' : 'Lễ khởi động VITA Award 2026 được tổ chức trang trọng với sự góp mặt của hơn 200 đại diện doanh nghiệp lữ hành, điểm đến và nhà sáng tạo nội dung du lịch trên cả nước.'
+      title: isEn ? 'VITA Award 2025 officially launches — Journey to honor Vietnam tourism' : 'VITA Award 2025 chính thức khởi động — Hành trình tôn vinh ngành du lịch Việt Nam',
+      desc: isEn ? 'The launch ceremony of VITA Award 2025 was solemnly held with the participation of over 200 representatives from travel agencies, destinations, and content creators.' : 'Lễ khởi động VITA Award 2025 được tổ chức trang trọng với sự góp mặt của hơn 200 đại diện doanh nghiệp lữ hành, điểm đến và nhà sáng tạo nội dung du lịch trên cả nước.'
     },
     {
       dateObj: new Date('2026-05-08'),
@@ -78,7 +78,7 @@ export default function News() {
       dateObj: new Date('2026-04-15'),
       dateStr: '15 Tháng 4, 2026',
       image: '/images/backround phat trien.png',
-      title: isEn ? 'New voting system introduced for 2026' : 'Hệ thống bình chọn mới được giới thiệu cho năm 2026',
+      title: isEn ? 'New voting system introduced for 2025' : 'Hệ thống bình chọn mới được giới thiệu cho năm 2025',
       desc: isEn ? 'A more transparent and secure voting platform for all users.' : 'Nền tảng bình chọn minh bạch và bảo mật hơn cho tất cả người dùng.'
     },
     {

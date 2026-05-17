@@ -483,7 +483,7 @@ export default function About() {
                 <span className="apg-jb-line">—</span>
               </div>
               <h2 className="apg-sec-heading">
-                {isEn ? 'The Journey of' : 'Hành trình'} <span className="gold-text">VITA Award 2026</span>
+                {isEn ? 'The Journey of' : 'Hành trình'} <span className="gold-text">VITA Award 2025</span>
               </h2>
               <div className="apg-gold-rule" />
             </div>

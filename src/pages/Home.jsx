@@ -46,7 +46,7 @@ export default function Home() {
               <span className="apg-hero-title-main">
                 VITA <span className="gold-text">AWARD</span>
               </span>
-              <span className="apg-hero-year-block">2026</span>
+              <span className="apg-hero-year-block">2025</span>
             </motion.h1>
 
             <motion.p

@@ -10,10 +10,10 @@
     "vote_now": "Bình chọn ngay"
   },
   "hero": {
-    "season": "★ Mùa giải 2026",
+    "season": "★ Mùa giải 2025",
     "title": "VITA",
     "subtitle": "AWARD",
-    "year": "2026",
+    "year": "2025",
     "award_name": "Giải thưởng Du lịch",
     "lead": "Tôn vinh giá trị, kết nối tương lai.",
     "scroll": "Cuộn để khám phá",
@@ -26,7 +26,7 @@
     "tag": "Phần 01 · Thông tin",
     "title": "Giới thiệu",
     "highlight": "VITA Award",
-    "desc": "VITA AWARD là Giải thưởng Du lịch Việt Nam do Hiệp hội Du lịch Việt Nam chủ trì tổ chức, phối hợp cùng Tạp chí Vietnam Travel và các đối tác chiến lược triển khai.",
+    "desc": "VITA AWARD là Giải thưởng Du lịch Việt Nam do Tạp chí Vietnam Travel chủ trì tổ chức, phối hợp cùng các cơ quan và các đối tác chiến lược triển khai.",
     "vision": "Tầm nhìn",
     "mission": "& Sứ mệnh",
     "vision_desc1": "Trở thành giải thưởng biểu tượng của ngành du lịch Việt Nam trong kỷ nguyên mới — nơi vinh danh những giá trị nổi bật, thúc đẩy chuyển đổi số & du lịch xanh, lan tỏa cảm hứng khám phá Việt Nam.",
@@ -82,7 +82,7 @@
     "tag": "Kết quả",
     "title": "Bảng xếp hạng",
     "highlight": "trực tiếp",
-    "desc": "Kết quả bình chọn được cập nhật liên tục theo thời gian thực. Đêm Gala 15.12.2026 sẽ công bố Quán quân chính thức.",
+    "desc": "Kết quả bình chọn được cập nhật liên tục theo thời gian thực. Đêm Gala 09.07.2026 sẽ công bố Quán quân chính thức.",
     "top_title": "Top đề cử — Điểm đến tiêu biểu",
     "updated": "Cập nhật lần cuối: vài giây trước",
     "live": "LIVE · REALTIME",
@@ -100,24 +100,24 @@
   "events": {
     "tag": "Phần 02 · Sự kiện",
     "title": "Hành trình",
-    "highlight": "VITA Award 2026",
+    "highlight": "VITA Award 2025",
     "desc": "Lộ trình chính thức của mùa giải — từ khởi động đề cử đến đêm Gala vinh danh."
   },
   "sponsors": {
     "tag": "Đồng hành · Tài trợ",
     "title": "Nhà",
     "highlight": "tài trợ & đối tác",
-    "desc": "Cảm ơn các đối tác đã đồng hành cùng VITA Award 2026 trong hành trình tôn vinh ngành du lịch Việt Nam.",
+    "desc": "Cảm ơn các đối tác đã đồng hành cùng VITA Award 2025 trong hành trình tôn vinh ngành du lịch Việt Nam.",
     "diamond": "Nhà tài trợ Kim cương",
     "gold": "Nhà tài trợ Vàng",
     "silver": "Đối tác Bạc & Truyền thông",
-    "become_sponsor": "Trở thành nhà tài trợ VITA Award 2026",
+    "become_sponsor": "Trở thành nhà tài trợ VITA Award 2025",
     "sponsor_desc": "Đồng hành cùng hành trình tôn vinh ngành du lịch Việt Nam",
     "contact": "Liên hệ đối tác →"
   },
   "footer": {
-    "desc": "Giải thưởng Du lịch Việt Nam 2026 — Tôn vinh giá trị, kết nối tương lai.",
-    "org": "Đơn vị tổ chức: Hiệp hội Du lịch Việt Nam",
+    "desc": "Giải thưởng Du lịch Việt Nam 2025 — Tôn vinh giá trị, kết nối tương lai.",
+    "org": "Đơn vị tổ chức: Tạp chí Vietnam Travel",
     "media": "Bảo trợ truyền thông: Tạp chí Vietnam Travel",
     "links": "Liên kết",
     "support": "Hỗ trợ",
@@ -125,7 +125,7 @@
     "faq": "Câu hỏi thường gặp",
     "rules": "Thể lệ giải thưởng",
     "guide": "Hướng dẫn bình chọn",
-    "copyright": "© 2026 VITA Award. All rights reserved. · Designed with ❤️ for Vietnamese Tourism"
+    "copyright": "© 2025 VITA Award. All rights reserved. · Designed with ❤️ for Vietnamese Tourism"
   },
   "auth": {
     "login_title": "Đăng nhập",

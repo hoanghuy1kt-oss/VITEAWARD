@@ -15,7 +15,6 @@ export default function Footer() {
             </div>
             <p>{t('footer.desc')}</p>
             <p style={{ marginTop: '14px', color: 'var(--text-muted)', fontSize: '13px' }}>{t('footer.org')}</p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{t('footer.media')}</p>
           </div>
           <div className="foot-col">
             <h5>{t('footer.links')}</h5>

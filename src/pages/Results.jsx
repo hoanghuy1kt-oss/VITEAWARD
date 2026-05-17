@@ -8,11 +8,14 @@ import { VOTE_CATEGORIES } from '../data/categories';
 // Hàm tạo danh sách đề cử ảo cho mỗi hạng mục con
 const generateDummyLeaderboard = (subId, subTitle, isEn) => {
   const images = [
-    '/images/Backround.png',
-    '/images/backround ket noi.png',
-    '/images/backround phat trien.png',
-    '/images/hero-collage.png',
-    '/images/Backround truyen cam hung.png'
+    'https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=600&auto=format&fit=crop', // Halong Bay
+    'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=600&auto=format&fit=crop', // Terraces
+    'https://images.unsplash.com/photo-1599708153386-62bf3f044d03?q=80&w=600&auto=format&fit=crop', // Cityscape
+    'https://images.unsplash.com/photo-1582035313360-1e5b877c4491?q=80&w=600&auto=format&fit=crop', // Resort
+    'https://images.unsplash.com/photo-1596401057633-54a8fb6944b4?q=80&w=600&auto=format&fit=crop', // Beach
+    'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?q=80&w=600&auto=format&fit=crop', // Mountains
+    'https://images.unsplash.com/photo-1542314831-c6a4d14effb0?q=80&w=600&auto=format&fit=crop', // Waterfall
+    'https://images.unsplash.com/photo-1506744626753-1fa28f6e5ebb?q=80&w=600&auto=format&fit=crop'  // Nature
   ];
   return Array.from({ length: 10 }).map((_, i) => ({
     id: `${subId}-n${i + 1}`,
@@ -203,16 +206,16 @@ export default function Results() {
                             {/* Background Asset */}
                             <img src={`/extracted_assets/${baseImg}`} alt="Base" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, objectFit: 'contain' }} />
 
-                            {/* Avatar & Ring Container (Exact 48.1% width, positioned at top curve) */}
-                            <div style={{ position: 'absolute', top: '-4%', left: '50%', transform: 'translateX(-50%)', width: '48.1%', aspectRatio: '141/147', zIndex: 5 }}>
+                            {/* Avatar & Ring Container (Exact 48.1% width, sticking out of top curve) */}
+                            <div style={{ position: 'absolute', top: '-18%', left: '50%', transform: 'translateX(-50%)', width: '48.1%', aspectRatio: '141/147', zIndex: 5 }}>
                                
                                {/* Crown for Top 1 (130% width of the ring) */}
                                {isTop1 && (
-                                 <img src="/extracted_assets/top1_crown.png" alt="Crown" style={{ position: 'absolute', top: '-45%', left: '50%', transform: 'translateX(-50%)', width: '130%', zIndex: 10, animation: 'float 3s ease-in-out infinite', objectFit: 'contain' }} />
+                                 <img src="/extracted_assets/top1_crown.png" alt="Crown" style={{ position: 'absolute', top: '-48%', left: '50%', transform: 'translateX(-50%)', width: '130%', zIndex: 10, animation: 'float 3s ease-in-out infinite', objectFit: 'contain' }} />
                                )}
 
                                {/* Inner Avatar Image */}
-                               <div style={{ width: '80%', height: '80%', position: 'absolute', top: '10%', left: '10%', borderRadius: '50%', overflow: 'hidden', zIndex: 6, background: '#050d28', border: '2px solid rgba(255,255,255,0.1)' }}>
+                               <div style={{ width: '80%', height: '80%', position: 'absolute', top: '10%', left: '10%', borderRadius: '50%', overflow: 'hidden', zIndex: 6, background: '#050d28', border: '2px solid rgba(255,255,255,0.1)', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.8)' }}>
                                   <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                </div>
                                
@@ -222,49 +225,49 @@ export default function Results() {
                                {/* Rank Badge */}
                                <div style={{ 
                                  position: 'absolute', 
-                                 bottom: '-12%', 
+                                 bottom: '-8%', 
                                  left: '50%', 
                                  transform: 'translateX(-50%)', 
-                                 width: '32%', 
+                                 width: '28%', 
                                  aspectRatio: '1/1', 
                                  background: badgeGradient, 
                                  borderRadius: '50%', 
-                                 border: '2px solid rgba(255,255,255,0.3)', 
+                                 border: 'none', 
                                  display: 'flex', 
                                  alignItems: 'center', 
                                  justifyContent: 'center', 
                                  color: '#111', 
-                                 fontWeight: '800', 
+                                 fontWeight: '900', 
                                  fontSize: '1rem', 
                                  zIndex: 8,
-                                 boxShadow: '0 4px 10px rgba(0,0,0,0.5), inset 0 0 5px rgba(255,255,255,0.5)'
+                                 boxShadow: '0 4px 10px rgba(0,0,0,0.7), inset 0 0 5px rgba(255,255,255,0.7), inset 0 0 2px rgba(0,0,0,0.5)'
                                }}>
                                  {i + 1}
                                </div>
                             </div>
 
                             {/* Name Content */}
-                            <div style={{ position: 'absolute', top: '44%', left: '50%', transform: 'translate(-50%, -50%)', width: '90%', textAlign: 'center', zIndex: 5 }}>
+                            <div style={{ position: 'absolute', top: '48%', left: '50%', transform: 'translate(-50%, -50%)', width: '90%', textAlign: 'center', zIndex: 5 }}>
                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', fontFamily: 'Be Vietnam Pro', marginBottom: '4px' }}>Đề cử xuất sắc</div>
-                               <div style={{ fontSize: '1rem', color: textColor, fontWeight: '700', fontFamily: 'Be Vietnam Pro', textShadow: '0 2px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.name}</div>
+                               <div style={{ fontSize: '0.9rem', color: textColor, fontWeight: '700', fontFamily: 'Be Vietnam Pro', textShadow: '0 2px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.name}</div>
                             </div>
 
                             {/* Vote Count Container */}
-                            <div style={{ position: 'absolute', top: '72%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 6, width: '100%' }}>
+                            <div style={{ position: 'absolute', top: '75%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 6, width: '100%' }}>
                                <motion.strong
                                   key={n.votes}
                                   initial={{ color: '#fff', scale: 1.2 }}
                                   animate={{ color: textColor, scale: 1 }}
-                                  style={{ fontSize: isTop1 ? '2.4rem' : '1.8rem', fontWeight: '800', fontFamily: 'Be Vietnam Pro', lineHeight: 1, textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
+                                  style={{ fontSize: isTop1 ? '2.2rem' : '1.7rem', fontWeight: '800', fontFamily: 'Be Vietnam Pro', lineHeight: 1, textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
                                >
                                  {n.votes.toLocaleString('vi-VN')}
                                </motion.strong>
-                               <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '2px', marginTop: '8px', textTransform: 'uppercase' }}>{t('results.votes')}</span>
+                               <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '2px', marginTop: '6px', textTransform: 'uppercase' }}>{t('results.votes')}</span>
                             </div>
 
                             {/* Laurels Left & Right */}
-                            <img src={`/extracted_assets/${laurelLeft}`} alt="Laurel Left" style={{ position: 'absolute', top: '56%', left: '5%', width: '32%', objectFit: 'contain', zIndex: 5 }} />
-                            <img src={`/extracted_assets/${laurelRight}`} alt="Laurel Right" style={{ position: 'absolute', top: '56%', right: '5%', width: '32%', objectFit: 'contain', zIndex: 5 }} />
+                            <img src={`/extracted_assets/${laurelLeft}`} alt="Laurel Left" style={{ position: 'absolute', top: '60%', left: '4%', width: '35%', objectFit: 'contain', zIndex: 5 }} />
+                            <img src={`/extracted_assets/${laurelRight}`} alt="Laurel Right" style={{ position: 'absolute', top: '60%', right: '4%', width: '35%', objectFit: 'contain', zIndex: 5 }} />
 
                           </motion.div>
                         </div>
@@ -333,38 +336,34 @@ export default function Results() {
                             <div className="lb-bar" style={{ display: 'block', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '99px', overflow: 'hidden', width: '100%' }}>
                               <motion.div 
                                 className="lb-bar-fill" 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${pct}%` }}
-                                transition={{ duration: 0.5 }}
-                                style={{ 
-                                  height: '100%', 
-                                  background: 'linear-gradient(90deg, #d4af37, #f6e6a8)', 
-                                  borderRadius: '99px'
-                                }}
-                              />
+                          
+                          <div style={{ flex: 1, marginLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#fff', margin: 0 }}>{n.name}</h4>
+                            {/* Gold Progress Bar */}
+                            <div style={{ width: '100%', height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
+                              <div style={{ width: `${Math.max(10, (n.votes / max) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff)', boxShadow: '0 0 10px var(--gold-200)' }}></div>
                             </div>
                           </div>
 
-                          <div className="lb-votes" style={{ textAlign: 'right', minWidth: '90px' }}>
+                          <div className="lb-votes" style={{ textAlign: 'right', minWidth: '90px', marginLeft: '20px' }}>
                             <motion.strong
                               key={n.votes}
                               initial={{ color: '#fff', scale: 1.2 }}
                               animate={{ color: '#fff', scale: 1 }}
-                              style={{ fontFamily: 'Be Vietnam Pro', fontSize: '1.2rem', fontWeight: '500' }}
+                              style={{ fontFamily: 'Be Vietnam Pro', fontSize: '1.2rem', fontWeight: '600' }}
                             >
                               {n.votes.toLocaleString('vi-VN')}
                             </motion.strong>
-                            <small style={{ display: 'block', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('results.votes')}</small>
+                            <small style={{ display: 'block', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px' }}>{t('results.votes')}</small>
                           </div>
                           
                           {/* Right Arrow */}
-                          <div style={{ color: 'rgba(212,175,55,0.5)', fontSize: '1.2rem', paddingLeft: '10px' }}>
+                          <div style={{ color: 'rgba(212,175,55,0.5)', fontSize: '1.2rem', paddingLeft: '16px' }}>
                             ›
                           </div>
                         </motion.div>
                       );
                     })}
-                  </div>
                 </AnimatePresence>
               </div>
             </div>

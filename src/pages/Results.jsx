@@ -76,6 +76,8 @@ export default function Results() {
   return (
     <PageTransition>
       <section id="winners" style={{ paddingTop: '120px', paddingBottom: '100px', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
+        {/* Bản đồ nền */}
+        <img src="/extracted_assets/map_bg.png" style={{ position: 'absolute', top: '10%', left: '50%', transform: 'translateX(-50%)', width: '100vw', opacity: 0.3, zIndex: 0, pointerEvents: 'none', objectFit: 'cover' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <ScrollReveal>
             <div className="section-head" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -200,15 +202,16 @@ export default function Results() {
                             {/* Background Asset */}
                             <img src={`/extracted_assets/${baseImg}`} alt="Base" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, objectFit: 'contain' }} />
 
-                            {/* Crown for Top 1 */}
-                            {isTop1 && (
-                              <img src="/extracted_assets/top1_crown.png" alt="Crown" style={{ position: 'absolute', top: '-8%', left: '50%', transform: 'translateX(-50%)', width: '45%', zIndex: 10, animation: 'float 3s ease-in-out infinite', objectFit: 'contain' }} />
-                            )}
+                            {/* Avatar & Ring Container (Exact 48.1% width, positioned at top curve) */}
+                            <div style={{ position: 'absolute', top: '-4%', left: '50%', transform: 'translateX(-50%)', width: '48.1%', aspectRatio: '141/147', zIndex: 5 }}>
+                               
+                               {/* Crown for Top 1 (130% width of the ring) */}
+                               {isTop1 && (
+                                 <img src="/extracted_assets/top1_crown.png" alt="Crown" style={{ position: 'absolute', top: '-45%', left: '50%', transform: 'translateX(-50%)', width: '130%', zIndex: 10, animation: 'float 3s ease-in-out infinite', objectFit: 'contain' }} />
+                               )}
 
-                            {/* Avatar & Ring Container */}
-                            <div style={{ position: 'absolute', top: isTop1 ? '0%' : '3%', width: '50%', aspectRatio: '1/1', zIndex: 5 }}>
                                {/* Inner Avatar Image */}
-                               <div style={{ width: '84%', height: '84%', position: 'absolute', top: '8%', left: '8%', borderRadius: '50%', overflow: 'hidden', zIndex: 6, background: '#050d28' }}>
+                               <div style={{ width: '80%', height: '80%', position: 'absolute', top: '10%', left: '10%', borderRadius: '50%', overflow: 'hidden', zIndex: 6, background: '#050d28', border: '2px solid rgba(255,255,255,0.1)' }}>
                                   <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                </div>
                                
@@ -218,50 +221,49 @@ export default function Results() {
                                {/* Rank Badge */}
                                <div style={{ 
                                  position: 'absolute', 
-                                 bottom: '-5%', 
+                                 bottom: '-12%', 
                                  left: '50%', 
                                  transform: 'translateX(-50%)', 
-                                 width: '35%', 
+                                 width: '32%', 
                                  aspectRatio: '1/1', 
                                  background: badgeGradient, 
                                  borderRadius: '50%', 
-                                 border: '2px solid #050d28', 
+                                 border: '2px solid rgba(255,255,255,0.3)', 
                                  display: 'flex', 
                                  alignItems: 'center', 
                                  justifyContent: 'center', 
                                  color: '#111', 
                                  fontWeight: '800', 
-                                 fontSize: '1.2rem', 
+                                 fontSize: '1rem', 
                                  zIndex: 8,
-                                 boxShadow: '0 4px 10px rgba(0,0,0,0.5)'
+                                 boxShadow: '0 4px 10px rgba(0,0,0,0.5), inset 0 0 5px rgba(255,255,255,0.5)'
                                }}>
                                  {i + 1}
                                </div>
                             </div>
 
                             {/* Name Content */}
-                            <div style={{ position: 'absolute', top: '48%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', textAlign: 'center', zIndex: 5 }}>
-                               <div style={{ fontSize: '1.1rem', color: textColor, fontWeight: '700', fontFamily: 'Be Vietnam Pro', padding: '0 10px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{n.name}</div>
+                            <div style={{ position: 'absolute', top: '44%', left: '50%', transform: 'translate(-50%, -50%)', width: '90%', textAlign: 'center', zIndex: 5 }}>
+                               <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', fontFamily: 'Be Vietnam Pro', marginBottom: '4px' }}>Đề cử xuất sắc</div>
+                               <div style={{ fontSize: '1rem', color: textColor, fontWeight: '700', fontFamily: 'Be Vietnam Pro', textShadow: '0 2px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.name}</div>
                             </div>
 
-                            {/* Vote Count & Laurels */}
-                            <div style={{ position: 'absolute', bottom: isTop1 ? '16%' : '18%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 5 }}>
-                               <img src={`/extracted_assets/${laurelLeft}`} alt="Laurel Left" style={{ width: '25%', marginRight: '5px', objectFit: 'contain' }} />
-                               
-                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                 <motion.strong
-                                    key={n.votes}
-                                    initial={{ color: '#fff', scale: 1.2 }}
-                                    animate={{ color: textColor, scale: 1 }}
-                                    style={{ fontSize: isTop1 ? '2.4rem' : '1.8rem', fontWeight: '800', fontFamily: 'Be Vietnam Pro', lineHeight: 1, textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
-                                 >
-                                   {n.votes.toLocaleString('vi-VN')}
-                                 </motion.strong>
-                                 <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.8)', letterSpacing: '2px', marginTop: '4px', textTransform: 'uppercase' }}>{t('results.votes')}</span>
-                               </div>
-                               
-                               <img src={`/extracted_assets/${laurelRight}`} alt="Laurel Right" style={{ width: '25%', marginLeft: '5px', objectFit: 'contain' }} />
+                            {/* Vote Count Container */}
+                            <div style={{ position: 'absolute', top: '72%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 6, width: '100%' }}>
+                               <motion.strong
+                                  key={n.votes}
+                                  initial={{ color: '#fff', scale: 1.2 }}
+                                  animate={{ color: textColor, scale: 1 }}
+                                  style={{ fontSize: isTop1 ? '2.4rem' : '1.8rem', fontWeight: '800', fontFamily: 'Be Vietnam Pro', lineHeight: 1, textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
+                               >
+                                 {n.votes.toLocaleString('vi-VN')}
+                               </motion.strong>
+                               <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '2px', marginTop: '8px', textTransform: 'uppercase' }}>{t('results.votes')}</span>
                             </div>
+
+                            {/* Laurels Left & Right */}
+                            <img src={`/extracted_assets/${laurelLeft}`} alt="Laurel Left" style={{ position: 'absolute', top: '56%', left: '5%', width: '32%', objectFit: 'contain', zIndex: 5 }} />
+                            <img src={`/extracted_assets/${laurelRight}`} alt="Laurel Right" style={{ position: 'absolute', top: '56%', right: '5%', width: '32%', objectFit: 'contain', zIndex: 5 }} />
 
                           </motion.div>
                         </div>
@@ -366,6 +368,11 @@ export default function Results() {
               </div>
             </div>
           </ScrollReveal>
+
+          {/* Dải ruy băng ở đáy */}
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '80px', paddingBottom: '40px', position: 'relative', zIndex: 10 }}>
+            <img src="/extracted_assets/bottom_ribbon.png" style={{ width: '100%', maxWidth: '600px', objectFit: 'contain' }} alt="Ribbon" />
+          </div>
         </div>
       </section>
     </PageTransition>

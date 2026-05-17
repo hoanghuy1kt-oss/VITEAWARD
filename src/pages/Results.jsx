@@ -1,34 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import PageTransition from '../components/PageTransition';
 import ScrollReveal from '../components/ScrollReveal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VOTE_CATEGORIES } from '../data/categories';
 
-// Hàm tạo danh sách đề cử ảo cho mỗi hạng mục con
 const generateDummyLeaderboard = (subId, subTitle, isEn) => {
   const images = [
-    'https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=600&auto=format&fit=crop', // Halong Bay
-    'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=600&auto=format&fit=crop', // Terraces
-    'https://images.unsplash.com/photo-1599708153386-62bf3f044d03?q=80&w=600&auto=format&fit=crop', // Cityscape
-    'https://images.unsplash.com/photo-1582035313360-1e5b877c4491?q=80&w=600&auto=format&fit=crop', // Resort
-    'https://images.unsplash.com/photo-1596401057633-54a8fb6944b4?q=80&w=600&auto=format&fit=crop', // Beach
-    'https://images.unsplash.com/photo-1518098268026-4e89f1a2cd8e?q=80&w=600&auto=format&fit=crop', // Mountains
-    'https://images.unsplash.com/photo-1542314831-c6a4d14effb0?q=80&w=600&auto=format&fit=crop', // Waterfall
-    'https://images.unsplash.com/photo-1506744626753-1fa28f6e5ebb?q=80&w=600&auto=format&fit=crop'  // Nature
+    'https://picsum.photos/seed/halong/600/400',
+    'https://picsum.photos/seed/citynight/600/400',
+    'https://picsum.photos/seed/terrace99/600/400',
+    'https://picsum.photos/seed/resort88/600/400',
+    'https://picsum.photos/seed/beach55/600/400',
+    'https://picsum.photos/seed/mountain33/600/400',
+    'https://picsum.photos/seed/roadtrip/600/400',
+    'https://picsum.photos/seed/waterfall7/600/400',
+    'https://picsum.photos/seed/balloon9/600/400',
+    'https://picsum.photos/seed/seascape2/600/400',
   ];
   return Array.from({ length: 10 }).map((_, i) => ({
     id: `${subId}-n${i + 1}`,
-    name: `${isEn ? 'Outstanding Nominee No. ' : 'Đề cử xuất sắc số '}${(i + 1).toString().padStart(2, '0')}`,
+    name: `Tên Đề Cử Số ${(i + 1).toString().padStart(2, '0')}`,
     desc: subTitle,
     image: images[i % images.length],
     votes: 15000 - i * 1200 + Math.floor(Math.random() * 500) // Tạo số vote ảo có xu hướng giảm dần theo rank
   }));
 };
 
+
+
 export default function Results() {
   const { t, i18n } = useTranslation();
   const isEn = i18n.language === 'en';
+
+
+
   
   // Tầng 1: Chọn Tab Nhóm Lớn
   const [currentCat, setCurrentCat] = useState('cat5');
@@ -47,6 +53,20 @@ export default function Results() {
       setSelectedSub(cat.items[0]);
     }
   }, [currentCat]);
+
+  // Dropdown state & logic
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Khi Hạng mục con thay đổi -> Tạo Leaderboard mới
   useEffect(() => {
@@ -76,19 +96,247 @@ export default function Results() {
 
   const top = [...leaderboard].sort((a,b) => b.votes - a.votes);
   const max = top[0]?.votes || 1;
+
+  // New CARD_CFG mapping
+  const CARD_CFG = [
+    { entry: 1, left: '18.5%', top: '18%', cardW: '31%', ringW: '46%', rank: 2, type: 'silver' },
+    { entry: 0, left: '50%',   top: '12%', cardW: '34%', ringW: '48%', rank: 1, type: 'gold'   },
+    { entry: 2, left: '81.5%', top: '18%', cardW: '31%', ringW: '46%', rank: 3, type: 'bronze' },
+  ];
+  const RING_IMGS = ['/extracted_assets/top1_ring.png', '/extracted_assets/top2_ring.png', '/extracted_assets/top2_ring.png'];
+  const RING_FILTER = ['none', 'none', 'hue-rotate(-160deg) saturate(1.5)'];
+
+  // Format title into two lines
+  const formatTitle = (text) => {
+    if (!text) return { line1: '', line2: '' };
+    const words = text.split(' ');
+    if (words.length <= 3) return { line1: text, line2: '' };
+    const mid = Math.ceil(words.length / 2);
+    return {
+      line1: words.slice(0, mid).join(' '),
+      line2: words.slice(mid).join(' ')
+    };
+  };
+  const titleText = isEn && selectedSub?.titleEn ? selectedSub.titleEn : selectedSub?.title;
+  const { line1, line2 } = formatTitle(titleText);
+
   return (
     <PageTransition>
       <section id="winners" style={{ paddingTop: '120px', paddingBottom: '100px', minHeight: '100vh', position: 'relative' }}>
+        <style>{`
+          /* ── Podium Buc ── */
+          .podium-buc { position: relative; width: 100%; max-width: 850px; margin: 0 auto 24px auto; background: var(--navy); border-radius: 12px; overflow: visible; }
+          .buc-img { width: 100%; display: block; height: auto; }
+          
+          /* Crown floats above gold card center */
+          .buc-crown {
+            position: absolute; left: 50%; top: -1%;
+            transform: translateX(-50%);
+            width: 10%; z-index: 15; pointer-events: none;
+            filter: drop-shadow(0 2px 10px rgba(212,175,55,.9));
+            animation: floatCrown 3s ease-in-out infinite;
+          }
+          @keyframes floatCrown { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-5px)} }
+          
+          /* Overlay for each card */
+          .buc-card {
+            position: absolute; transform: translateX(-50%) !important;
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 10;
+          }
+          
+          /* Ring + photo */
+          .buc-ring-wrap { position: relative; width: 100%; aspect-ratio: 1; flex-shrink: 0; }
+          .buc-photo {
+            position: absolute; top: 10%; left: 10%; width: 80%; height: 80%;
+            border-radius: 50%; overflow: hidden; background: #050d28;
+            box-shadow: inset 0 0 8px rgba(0,0,0,.9);
+          }
+          .buc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+          .buc-ring {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: contain; z-index: 2; pointer-events: none;
+          }
+          .buc-rank {
+            position: absolute; bottom: -6%; left: 50%; transform: translateX(-50%);
+            width: 28%; aspect-ratio: 1; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; color: #111; z-index: 3;
+            box-shadow: 0 3px 8px rgba(0,0,0,.6), inset 0 0 4px rgba(255,255,255,.6);
+            font-size: .75rem;
+          }
+          .buc-rank-gold   { background: linear-gradient(135deg, #f6e6a8, #d4af37); font-size: .9rem; }
+          .buc-rank-silver { background: linear-gradient(135deg, #fff, #94a3b8); }
+          .buc-rank-bronze { background: linear-gradient(135deg, #fcd34d, #cd7f32); }
+          
+          /* Text overlay */
+          .buc-sub  { font-size: clamp(0.6rem, 1.3vw, 0.85rem); color: rgba(255,255,255,.5); margin-top: clamp(24px, 4vw, 38px); text-align: center; text-transform: uppercase; letter-spacing: 1px; width: 90%; }
+          .buc-name { 
+            font-weight: 700; font-size: clamp(0.75rem, 1.6vw, 1.05rem); line-height: 1.3; 
+            text-align: center; margin-top: 4px; width: 95%; max-width: 220px;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+            word-wrap: break-word;
+          }
+          .buc-name-gold   { color: var(--gold-200); font-size: clamp(0.85rem, 1.8vw, 1.25rem); max-width: 260px; }
+          .buc-name-silver { color: #cbd5e1; }
+          .buc-name-bronze { color: #f6c768; }
+          .buc-votes { font-weight: 800; line-height: 1; text-align: center; margin-top: 8px; text-shadow: 0 2px 6px rgba(0,0,0,.7); }
+          .buc-votes-gold   { font-size: clamp(1.5rem, 5vw, 2.8rem); color: var(--gold-200); }
+          .buc-votes-silver { font-size: clamp(1.2rem, 4vw, 2.2rem); color: #cbd5e1; }
+          .buc-votes-bronze { font-size: clamp(1.2rem, 4vw, 2.2rem); color: #f6c768; }
+          .buc-vote-lbl { font-size: clamp(0.55rem, 1.2vw, 0.8rem); color: rgba(255,255,255,.4); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+          
+          /* ── Gold divider ── */
+          .gold-divider {
+            height: 2px; margin: 8px 0 20px;
+            background: linear-gradient(90deg, transparent, var(--gold-400) 20%, var(--gold-200) 50%, var(--gold-400) 80%, transparent);
+            box-shadow: 0 0 12px rgba(212,175,55,.3); border-radius: 999px;
+          }
+
+          /* ── Title Header ── */
+          .lb-header { text-align: center; margin-bottom: 40px; position: relative; z-index: 2; width: 100%; }
+          .lb-tagline { 
+            display: flex; align-items: center; justify-content: center; gap: 20px; 
+            margin-bottom: 16px; position: relative;
+          }
+          .lb-tagline span {
+            font-size: 0.9rem; letter-spacing: 4px; color: var(--gold-200);
+            text-transform: uppercase; font-weight: 600; font-style: italic;
+            font-family: 'Be Vietnam Pro', sans-serif;
+          }
+          .lb-tagline::before, .lb-tagline::after {
+            content: ''; height: 1px; width: 60px;
+            background: linear-gradient(90deg, transparent, var(--gold-400));
+          }
+          .lb-tagline::after { background: linear-gradient(-90deg, transparent, var(--gold-400)); }
+          
+          .live-tag {
+            position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+            background: rgba(212,175,55,0.1); border: 1px solid var(--gold-400);
+            padding: 6px 14px; border-radius: 100px;
+            display: flex; align-items: center; gap: 8px;
+            color: var(--gold-200); font-size: 0.8rem; font-weight: bold;
+          }
+          .live-dot { width: 8px; height: 8px; background: #ff3b30; border-radius: 50%; animation: pulse 1.5s infinite; }
+          @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,59,48,0.7); } 70% { box-shadow: 0 0 0 6px rgba(255,59,48,0); } 100% { box-shadow: 0 0 0 0 rgba(255,59,48,0); } }
+
+          .lb-title {
+            font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.3;
+            color: #fff; text-transform: uppercase; margin-bottom: 24px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5); font-family: 'Playfair Display', 'Be Vietnam Pro', serif;
+            padding-top: 10px;
+          }
+          
+          /* Ngăn text-shadow phá vỡ hiệu ứng background-clip: text của gold-text */
+          .lb-title .gold-text {
+            text-shadow: none;
+          }
+          
+          /* ── Subtitle Pill (Exact match) ── */
+          .lb-subtitle {
+            display: inline-flex; align-items: center; gap: 12px;
+            padding: 10px 28px; border-radius: 100px;
+            background: #23252b; border: 1px solid #c7a450;
+            color: #f1dd8a; font-weight: 800; font-size: 1.05rem; letter-spacing: 1.5px;
+            font-family: 'Be Vietnam Pro', sans-serif; text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+          }
+          .lb-subtitle img { width: 32px; height: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); margin-left: -6px; }
+          
+          /* ── List rows 4–10 ── */
+          .list-rows { display: flex; flex-direction: column; gap: 12px; }
+          
+          .list-row {
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(8,15,40,.55);
+            border: 1px solid rgba(255,255,255,.05);
+            border-radius: 16px; padding: 16px 24px;
+            transition: background .2s, border-color .2s;
+          }
+          .list-row:hover { background: rgba(212,175,55,.07); border-color: rgba(212,175,55,.2); }
+          
+          .list-rank { font-size: 1.8rem; font-weight: 700; color: var(--gold-400); width: 40px; text-align: center; flex-shrink: 0; }
+          
+          .list-thumb { width: 90px; height: 60px; border-radius: 10px; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,.1); }
+          .list-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+          
+          .list-info { flex: 1; min-width: 0; }
+          .list-name { font-weight: 600; font-size: 1.15rem; color: #fff; line-height: 1.4; }
+          .list-bar-wrap { margin-top: 10px; height: 5px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
+          .list-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff); box-shadow: 0 0 8px var(--gold-200); transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+          
+          .list-votes { text-align: right; flex-shrink: 0; }
+          .list-votes strong { font-size: 1.4rem; font-weight: 700; color: #fff; display: block; }
+          .list-votes small { font-size: .75rem; color: rgba(255,255,255,.4); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; display: block; }
+
+          /* ── Premium Dropdown Menu (Integrated into Tagline) ── */
+          .custom-select-wrapper {
+            position: relative; display: inline-flex; justify-content: center;
+            z-index: 50; margin-bottom: 16px; width: 100%;
+          }
+          .custom-select-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: transparent; border: none; cursor: pointer;
+            position: relative;
+          }
+          .custom-select-btn span {
+            font-size: 0.9rem; letter-spacing: 3px; color: var(--gold-200);
+            text-transform: uppercase; font-weight: 600; font-style: italic;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: color 0.2s;
+          }
+          .custom-select-btn:hover span { color: var(--gold-400); text-shadow: 0 0 10px rgba(212,175,55,0.4); }
+          
+          /* Gold lines on the sides */
+          .custom-select-btn::before, .custom-select-btn::after {
+            content: ''; height: 1px; width: 60px;
+            background: linear-gradient(90deg, transparent, var(--gold-400));
+            position: absolute; top: 50%; transform: translateY(-50%);
+          }
+          .custom-select-btn::before { right: 100%; margin-right: 20px; }
+          .custom-select-btn::after { left: 100%; margin-left: 20px; background: linear-gradient(-90deg, transparent, var(--gold-400)); }
+          
+          .custom-select-btn .chevron { transition: transform 0.3s; color: var(--gold-200); }
+          .custom-select-btn.open .chevron { transform: rotate(180deg); }
+          
+          .custom-select-menu {
+            position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%) translateY(-10px);
+            width: max-content; min-width: 320px; max-width: 90vw;
+            background: rgba(10, 15, 36, 0.98); backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 20px;
+            padding: 12px; display: flex; flex-direction: column; gap: 4px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            max-height: 400px; overflow-y: auto;
+            opacity: 0; visibility: hidden; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .custom-select-menu.open {
+            opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+          }
+          
+          .custom-select-menu::-webkit-scrollbar { width: 6px; }
+          .custom-select-menu::-webkit-scrollbar-track { background: transparent; }
+          .custom-select-menu::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); border-radius: 10px; }
+          .custom-select-menu::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.7); }
+
+          .custom-select-item {
+            padding: 12px 20px; border-radius: 12px; background: transparent;
+            border: none; color: #cbd5e1; font-size: 0.95rem; text-align: left;
+            cursor: pointer; transition: all 0.2s; font-family: 'Be Vietnam Pro', sans-serif;
+            display: flex; align-items: center; gap: 10px;
+          }
+          .custom-select-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+          .custom-select-item.active {
+            background: rgba(212,175,55,0.15); color: var(--gold-200); font-weight: 600;
+          }
+          .custom-select-item.active::before {
+            content: '✓'; color: var(--gold-400); font-weight: bold; margin-left: -4px;
+          }
+        `}</style>
+
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <ScrollReveal>
-            <div className="section-head" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <span className="apg-hero-script" style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{t('results.tag')}</span>
-              <h2 className="apg-sec-heading">{t('results.title')} <span className="gold-text">{t('results.highlight')}</span></h2>
-              <div className="apg-gold-rule" style={{ margin: '20px auto 28px' }}></div>
-              <p className="apg-body-text" style={{ maxWidth: '600px', margin: '0 auto' }}>{t('results.desc')}</p>
-            </div>
-
-            {/* TẦNG 1: TAB NHÓM LỚN */}
+            {/* TẦNG 1: TAB NHÓM LỚN - ĐƯA LÊN TRÊN */}
             <div className="vote-toolbar" style={{ overflowX: 'auto', paddingBottom: '10px', margin: '0 auto 30px auto', maxWidth: 'max-content' }}>
               <div className="vote-tabs" style={{ display: 'flex', gap: '10px', minWidth: 'max-content', padding: '0 10px' }}>
                 {VOTE_CATEGORIES.map(cat => (
@@ -104,263 +352,145 @@ export default function Results() {
               </div>
             </div>
 
-            {/* TẦNG 2: MENU HẠNG MỤC CON */}
-            <div style={{ marginBottom: '40px', background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '16px', border: '1px solid var(--line)' }}>
-              <h4 style={{ color: 'var(--text-soft)', fontSize: '0.95rem', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                {isEn ? 'Select Category:' : 'Chọn Hạng Mục Tranh Giải:'}
-              </h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                {activeCategory.items.map(sub => (
-                  <button
-                    key={sub.id}
-                    onClick={() => setSelectedSub(sub)}
-                    style={{
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      border: `1px solid ${selectedSub?.id === sub.id ? 'var(--gold-200)' : 'var(--line)'}`,
-                      background: selectedSub?.id === sub.id ? 'rgba(212,175,55,0.1)' : 'transparent',
-                      color: selectedSub?.id === sub.id ? 'var(--gold-200)' : '#fff',
-                      fontSize: '0.9rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      textAlign: 'left',
-                      fontFamily: 'Be Vietnam Pro'
-                    }}
-                  >
-                    {sub.id}. {isEn && sub.titleEn ? sub.titleEn : sub.title}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* TẦNG 3: BẢNG XẾP HẠNG (LEADERBOARD) */}
-            <div className="winner-board" style={{ position: 'relative', overflow: 'hidden', background: 'rgba(5, 13, 40, 0.4)', borderRadius: '24px', padding: '32px', border: '1px solid rgba(212, 175, 55, 0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' }}>
-              {/* Bản đồ nền chỉ nằm trong Bảng xếp hạng */}
-              <img src="/extracted_assets/map_bg.png" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', minWidth: '800px', opacity: 0.3, zIndex: 0, pointerEvents: 'none', mixBlendMode: 'screen' }} />
+            {/* TẦNG 2 & 3: BẢNG XẾP HẠNG (LEADERBOARD) - TÍCH HỢP CHỌN HẠNG MỤC */}
+            <div style={{ position: 'relative', overflow: 'visible', padding: '10px 0' }}>
               
-              <div className="winner-head" style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid var(--line)', paddingBottom: '20px', marginBottom: '24px' }}>
-                <div>
-                  <h3 className="apg-sec-heading" style={{ fontSize: '1.8rem', color: '#fff', textTransform: 'none', letterSpacing: '0' }}>{isEn && selectedSub?.titleEn ? selectedSub.titleEn : selectedSub?.title}</h3>
-                  <div className="apg-hero-script" style={{ fontSize: '1.1rem', marginTop: '8px' }}>{isEn ? 'Top 10 Leading Nominees' : 'Top 10 đề cử dẫn đầu'}</div>
+              <div className="lb-header">
+                
+                {/* INTERACTIVE TAGLINE AS DROPDOWN */}
+                <div className="custom-select-wrapper" ref={dropdownRef}>
+                  <button 
+                    className={`custom-select-btn ${isDropdownOpen ? 'open' : ''}`}
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    <span>{isEn ? 'SELECT CATEGORY' : 'CHỌN HẠNG MỤC'}</span>
+                    <svg className="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '2px', marginTop: '2px' }}>
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  
+                  <div className="live-tag">
+                    <span className="live-dot"></span> LIVE UPDATE
+                  </div>
+                  
+                  <div className={`custom-select-menu ${isDropdownOpen ? 'open' : ''}`}>
+                    {activeCategory.items.map(sub => (
+                      <button
+                        key={sub.id}
+                        onClick={() => {
+                          setSelectedSub(sub);
+                          setIsDropdownOpen(false);
+                        }}
+                        className={`custom-select-item ${selectedSub?.id === sub.id ? 'active' : ''}`}
+                      >
+                        {isEn && sub.titleEn ? sub.titleEn : sub.title}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="live-tag" style={{ background: 'rgba(212,175,55,0.1)', border: '1px solid var(--gold-400)', padding: '6px 14px', borderRadius: '100px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--gold-200)', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                  <span className="live-dot" style={{ width: '8px', height: '8px', background: '#ff3b30', borderRadius: '50%', animation: 'pulse 1.5s infinite' }}></span> LIVE UPDATE
+                
+                <h2 className="lb-title">
+                  {line1}
+                  {line2 && (
+                    <>
+                      <br />
+                      <span className="gold-text">{line2}</span>
+                    </>
+                  )}
+                </h2>
+                
+                {/* EXACT PILL MATCH */}
+                <div className="lb-subtitle">
+                  <img src="/extracted_assets/top1_crown.png" alt="Crown" />
+                  {isEn ? 'TOP 10 LEADING NOMINEES' : 'TOP 10 ĐỀ CỬ DẪN ĐẦU'}
                 </div>
               </div>
               
               <div style={{ position: 'relative', zIndex: 1, minHeight: '400px' }}>
                 <AnimatePresence>
+                  
                   {/* PODIUM cho Top 3 */}
-                  <div className="podium-grid" style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-                    gap: '20px', 
-                    marginBottom: '60px',
-                    alignItems: 'end',
-                    position: 'relative',
-                    paddingTop: '60px'
-                  }}>
-                    {top.slice(0, 3).map((n, i) => {
-                      const isTop1 = i === 0;
-                      const isTop2 = i === 1;
-                      
-                      const orderIndex = isTop1 ? 2 : isTop2 ? 1 : 3;
-                      const baseImg = isTop1 ? 'top1_base.png' : isTop2 ? 'top2_base.png' : 'top3_base.png';
-                      const ringImg = isTop1 ? 'top1_ring.png' : 'top2_ring.png';
-                      const laurelLeft = isTop1 ? 'gold_laurel_left.png' : isTop2 ? 'blue_laurel_left.png' : 'bronze_laurel_left.png';
-                      const laurelRight = isTop1 ? 'gold_laurel_right.png' : isTop2 ? 'blue_laurel_right.png' : 'bronze_laurel_right.png';
-                      const textColor = isTop1 ? '#d4af37' : isTop2 ? '#94a3b8' : '#cd7f32';
-                      const badgeGradient = isTop1 ? 'linear-gradient(135deg, #f6e6a8, #d4af37)' : isTop2 ? 'linear-gradient(135deg, #ffffff, #94a3b8)' : 'linear-gradient(135deg, #fcd34d, #cd7f32)';
-
+                  <div className="podium-buc">
+                    <img className="buc-img" src="/extracted_assets/Buc.png" alt="" />
+                    <img className="buc-crown" src="/extracted_assets/top1_crown.png" alt="" />
+                    
+                    {CARD_CFG.map(cfg => {
+                      const e = top[cfg.entry];
+                      if (!e) return null;
                       return (
-                        <div 
-                          key={`wrapper-${n.id}`}
-                          className={`podium-wrapper top${i+1}`}
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            order: orderIndex,
-                            position: 'relative',
-                            width: '100%',
-                            maxWidth: '320px',
-                            margin: '0 auto'
-                          }}
-                        >
+                        <div key={e.id} className="buc-card" style={{ left: cfg.left, top: cfg.top, width: cfg.cardW }}>
+                          <div className="buc-ring-wrap" style={{ width: cfg.ringW, margin: '0 auto' }}>
+                            <div className="buc-photo"><img src={e.image} alt={e.name} loading="lazy" /></div>
+                            <img className="buc-ring" src={RING_IMGS[cfg.entry]} alt="" style={{ filter: RING_FILTER[cfg.entry] }} />
+                            <div className={`buc-rank buc-rank-${cfg.type}`}>{cfg.rank}</div>
+                          </div>
+                          <div className="buc-sub">{isEn ? 'Outstanding Nominee' : 'Đề cử xuất sắc'}</div>
+                          <div className={`buc-name buc-name-${cfg.type}`} title={e.name}>{e.name}</div>
                           <motion.div 
-                            layoutId={`card-${n.id}`}
-                            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            style={{ 
-                              position: 'relative',
-                              width: '100%',
-                              aspectRatio: isTop1 ? '293/384' : isTop2 ? '293/386' : '301/392',
-                              display: 'flex', 
-                              flexDirection: 'column',
-                              alignItems: 'center',
-                              zIndex: isTop1 ? 10 : 5
-                            }}
+                            className={`buc-votes buc-votes-${cfg.type}`}
+                            key={e.votes}
+                            initial={{ scale: 1.3 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
                           >
-                            {/* Background Asset */}
-                            <img src={`/extracted_assets/${baseImg}`} alt="Base" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, objectFit: 'contain' }} />
-
-                            {/* Avatar & Ring Container (Exact 48.1% width, sticking out of top curve) */}
-                            <div style={{ position: 'absolute', top: '-18%', left: '50%', transform: 'translateX(-50%)', width: '48.1%', aspectRatio: '141/147', zIndex: 5 }}>
-                               
-                               {/* Crown for Top 1 (130% width of the ring) */}
-                               {isTop1 && (
-                                 <img src="/extracted_assets/top1_crown.png" alt="Crown" style={{ position: 'absolute', top: '-48%', left: '50%', transform: 'translateX(-50%)', width: '130%', zIndex: 10, animation: 'float 3s ease-in-out infinite', objectFit: 'contain' }} />
-                               )}
-
-                               {/* Inner Avatar Image */}
-                               <div style={{ width: '80%', height: '80%', position: 'absolute', top: '10%', left: '10%', borderRadius: '50%', overflow: 'hidden', zIndex: 6, background: '#050d28', border: '2px solid rgba(255,255,255,0.1)', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.8)' }}>
-                                  <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                               </div>
-                               
-                               {/* Metallic Ring */}
-                               <img src={`/extracted_assets/${ringImg}`} alt="Ring" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 7, filter: !isTop1 && !isTop2 ? 'hue-rotate(-160deg) saturate(1.5)' : 'none', objectFit: 'contain' }} />
-                               
-                               {/* Rank Badge */}
-                               <div style={{ 
-                                 position: 'absolute', 
-                                 bottom: '-8%', 
-                                 left: '50%', 
-                                 transform: 'translateX(-50%)', 
-                                 width: '28%', 
-                                 aspectRatio: '1/1', 
-                                 background: badgeGradient, 
-                                 borderRadius: '50%', 
-                                 border: 'none', 
-                                 display: 'flex', 
-                                 alignItems: 'center', 
-                                 justifyContent: 'center', 
-                                 color: '#111', 
-                                 fontWeight: '900', 
-                                 fontSize: '1rem', 
-                                 zIndex: 8,
-                                 boxShadow: '0 4px 10px rgba(0,0,0,0.7), inset 0 0 5px rgba(255,255,255,0.7), inset 0 0 2px rgba(0,0,0,0.5)'
-                               }}>
-                                 {i + 1}
-                               </div>
-                            </div>
-
-                            {/* Name Content */}
-                            <div style={{ position: 'absolute', top: '48%', left: '50%', transform: 'translate(-50%, -50%)', width: '90%', textAlign: 'center', zIndex: 5 }}>
-                               <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', fontFamily: 'Be Vietnam Pro', marginBottom: '4px' }}>Đề cử xuất sắc</div>
-                               <div style={{ fontSize: '0.9rem', color: textColor, fontWeight: '700', fontFamily: 'Be Vietnam Pro', textShadow: '0 2px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.name}</div>
-                            </div>
-
-                            {/* Vote Count Container */}
-                            <div style={{ position: 'absolute', top: '75%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 6, width: '100%' }}>
-                               <motion.strong
-                                  key={n.votes}
-                                  initial={{ color: '#fff', scale: 1.2 }}
-                                  animate={{ color: textColor, scale: 1 }}
-                                  style={{ fontSize: isTop1 ? '2.2rem' : '1.7rem', fontWeight: '800', fontFamily: 'Be Vietnam Pro', lineHeight: 1, textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
-                               >
-                                 {n.votes.toLocaleString('vi-VN')}
-                               </motion.strong>
-                               <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '2px', marginTop: '6px', textTransform: 'uppercase' }}>{t('results.votes')}</span>
-                            </div>
-
-                            {/* Laurels Left & Right */}
-                            <img src={`/extracted_assets/${laurelLeft}`} alt="Laurel Left" style={{ position: 'absolute', top: '60%', left: '4%', width: '35%', objectFit: 'contain', zIndex: 5 }} />
-                            <img src={`/extracted_assets/${laurelRight}`} alt="Laurel Right" style={{ position: 'absolute', top: '60%', right: '4%', width: '35%', objectFit: 'contain', zIndex: 5 }} />
-
+                            {e.votes.toLocaleString('vi-VN')}
                           </motion.div>
+                          <div className="buc-vote-lbl">{t('results.votes') || 'Lượt Vote'}</div>
                         </div>
                       );
                     })}
                   </div>
 
+                  <div className="gold-divider"></div>
+
                   {/* DANH SÁCH cho Top 4-10 */}
-                  <div className="list-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {top.slice(3).map((n, idx) => {
+                  <div className="list-rows">
+                    {top.slice(3).map((e, idx) => {
                       const i = idx + 3; // true rank index (3 to 9)
-                      const pct = (n.votes / max) * 100;
+                      const pct = Math.max(8, (e.votes / max) * 100);
                       
                       return (
                         <motion.div 
-                          layoutId={`card-${n.id}`}
+                          layoutId={`card-${e.id}`}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0 }}
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="lb-row" 
-                          key={n.id}
-                          style={{ 
-                            background: 'rgba(10, 15, 35, 0.4)', 
-                            borderRadius: '12px', 
-                            padding: '12px 20px', 
-                            display: 'flex', 
-                            alignItems: 'center',
-                            border: '1px solid rgba(255,255,255,0.05)',
-                            gap: '20px',
-                            position: 'relative',
-                            boxShadow: 'inset 0 -2px 10px rgba(255,255,255,0.02)'
-                          }}
+                          className="list-row" 
+                          key={e.id}
                         >
-                          <div className="rank" style={{ 
-                            fontSize: '1.4rem', 
-                            fontWeight: '600', 
-                            color: '#d4af37', 
-                            fontFamily: 'Be Vietnam Pro',
-                            width: '30px',
-                            textAlign: 'center'
-                          }}>
-                            {i + 1}
+                          <div className="list-rank">{i + 1}</div>
+                          
+                          <div className="list-thumb">
+                            <img src={e.image} alt={e.name} loading="lazy" />
                           </div>
                           
-                          <div className="lb-avatar" style={{ 
-                            width: '60px', 
-                            height: '40px', 
-                            borderRadius: '8px', 
-                            overflow: 'hidden', 
-                            flexShrink: 0, 
-                            border: '1px solid rgba(255,255,255,0.1)'
-                          }}>
-                            <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          </div>
-                          <div style={{ flex: 1, marginLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#fff', margin: 0 }}>{n.name}</h4>
-                            {/* Gold Progress Bar */}
-                            <div style={{ width: '100%', height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
-                              <div style={{ width: `${Math.max(10, (n.votes / max) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff)', boxShadow: '0 0 10px var(--gold-200)' }}></div>
+                          <div className="list-info">
+                            <div className="list-name">{e.name}</div>
+                            <div className="list-bar-wrap">
+                              <div className="list-bar" style={{ width: `${pct}%` }}></div>
                             </div>
                           </div>
 
-
-                          <div className="lb-votes" style={{ textAlign: 'right', minWidth: '90px', marginLeft: '20px' }}>
+                          <div className="list-votes">
                             <motion.strong
-                              key={n.votes}
-                              initial={{ color: '#fff', scale: 1.2 }}
-                              animate={{ color: '#fff', scale: 1 }}
-                              style={{ fontFamily: 'Be Vietnam Pro', fontSize: '1.2rem', fontWeight: '600' }}
+                              key={e.votes}
+                              initial={{ scale: 1.3 }}
+                              animate={{ scale: 1 }}
                             >
-                              {n.votes.toLocaleString('vi-VN')}
+                              {e.votes.toLocaleString('vi-VN')}
                             </motion.strong>
-                            <small style={{ display: 'block', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px' }}>{t('results.votes')}</small>
-                          </div>
-                          
-                          {/* Right Arrow */}
-                          <div style={{ color: 'rgba(212,175,55,0.5)', fontSize: '1.2rem', paddingLeft: '16px' }}>
-                            ›
+                            <small>{t('results.votes') || 'Lượt Vote'}</small>
                           </div>
                         </motion.div>
                       );
                     })}
                   </div>
+
                 </AnimatePresence>
               </div>
             </div>
           </ScrollReveal>
-
-          {/* Dải ruy băng ở đáy */}
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '80px', paddingBottom: '40px', position: 'relative', zIndex: 10 }}>
-            <img src="/extracted_assets/bottom_ribbon.png" style={{ width: '100%', maxWidth: '600px', objectFit: 'contain' }} alt="Ribbon" />
-          </div>
         </div>
       </section>
     </PageTransition>

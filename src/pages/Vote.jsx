@@ -165,7 +165,7 @@ export default function Vote() {
                           
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginTop: 'auto', paddingTop: '10px' }}>
                             <div className="vote-count" style={{ color: 'var(--gold-200)', fontSize: '0.9rem' }}>
-                              <strong style={{ fontSize: '1.2rem', fontFamily: 'Be Vietnam Pro' }}>{(12000 + i * 500).toLocaleString('vi-VN')}</strong> {t('vote.votes')}
+                              <strong style={{ fontSize: '1.2rem', fontFamily: 'Be Vietnam Pro' }}>{(12000 + i * 500 + (isVoted ? 1 : 0)).toLocaleString('vi-VN')}</strong> {t('vote.votes')}
                             </div>
                             <div className="vote-checklist">
                               <input 

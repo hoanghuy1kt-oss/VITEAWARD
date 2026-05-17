@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "viteaward-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeExecutable": "/tmp/start-vite.sh",
+      "runtimeArgs": [],
       "port": 5173
     }
   ]

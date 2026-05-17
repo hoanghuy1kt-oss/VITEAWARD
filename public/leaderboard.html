@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảng Xếp Hạng - Doanh Nghiệp Du Lịch Lữ Hành Xanh Hàng Đầu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #050d28;
+    --gold-100: #f6e6a8;
+    --gold-200: #f2d680;
+    --gold-400: #d4af37;
+    --silver: #94a3b8;
+    --bronze: #cd7f32;
+  }
+
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: #050d28;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  /* ── Background ── */
+  /* Sparkles */
+  .sp { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; animation: twinkle var(--d,3s) ease-in-out infinite var(--dl,0s); }
+  @keyframes twinkle { 0%,100%{opacity:.15;transform:scale(1)} 50%{opacity:.8;transform:scale(1.6)} }
+
+  /* ── Page ── */
+  .page {
+    position: relative; z-index: 1;
+    max-width: 800px; margin: 0 auto;
+    padding: 32px 32px 40px;
+    background: rgba(5, 13, 40, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  /* ── Header ── */
+  .header { text-align: center; margin-bottom: 28px; position: relative; }
+
+  .live-badge {
+    position: absolute; top: 4px; right: 0;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(5,13,40,.7);
+    border: 1px solid rgba(212,175,55,.4);
+    border-radius: 999px; padding: 5px 12px;
+    font-size: .7rem; font-weight: 700; letter-spacing: 1px; color: var(--gold-200);
+  }
+  .live-dot { width: 7px; height: 7px; background: #ff3b30; border-radius: 50%; animation: pulse 1.4s ease-in-out infinite; box-shadow: 0 0 6px #ff3b30; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .tag-script {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: .95rem; color: var(--gold-200); letter-spacing: 3px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .tag-script::before, .tag-script::after {
+    content: ''; width: 36px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-400));
+  }
+  .tag-script::after { transform: scaleX(-1); }
+
+  .main-title { font-family: 'Playfair Display', serif; font-weight: 900; line-height: 1.1; }
+  .main-title .l1 { display: block; font-size: clamp(1.6rem, 5vw, 2.6rem); color: #fff; letter-spacing: .5px; }
+  .main-title .l2 {
+    display: block; font-size: clamp(1.9rem, 6vw, 3rem);
+    background: linear-gradient(135deg, #f2d680, #d4af37 45%, #f6e6a8 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    background-size: 200% auto; animation: shine 3s linear infinite;
+  }
+  @keyframes shine { to { background-position: 200% center; } }
+
+  .subtitle-pill {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+    background: linear-gradient(135deg, rgba(212,175,55,.18), rgba(212,175,55,.05));
+    border: 1px solid rgba(212,175,55,.4); border-radius: 999px;
+    padding: 6px 20px; font-size: .82rem; font-weight: 700;
+    color: var(--gold-100); letter-spacing: 1.5px; text-transform: uppercase;
+  }
+
+  /* ── Podium Buc ── */
+  .podium-buc { position: relative; width: 100%; margin-bottom: 16px; background: var(--navy); border-radius: 12px; overflow: visible; }
+  .buc-img { width: 100%; display: block; height: auto; }
+
+  /* Crown floats above gold card center */
+  .buc-crown {
+    position: absolute; left: 50%; top: -1%;
+    transform: translateX(-50%);
+    width: 10%; z-index: 15; pointer-events: none;
+    filter: drop-shadow(0 2px 10px rgba(212,175,55,.9));
+    animation: floatCrown 3s ease-in-out infinite;
+  }
+  @keyframes floatCrown { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-5px)} }
+
+  /* Overlay for each card — positioned by inline left/top/width */
+  .buc-card {
+    position: absolute; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    z-index: 10;
+  }
+
+  /* Ring + photo */
+  .buc-ring-wrap { position: relative; width: 100%; aspect-ratio: 1; flex-shrink: 0; }
+  .buc-photo {
+    position: absolute; top: 10%; left: 10%; width: 80%; height: 80%;
+    border-radius: 50%; overflow: hidden; background: #050d28;
+    box-shadow: inset 0 0 8px rgba(0,0,0,.9);
+  }
+  .buc-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .buc-ring {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: contain; z-index: 2; pointer-events: none;
+  }
+  .buc-rank {
+    position: absolute; bottom: -6%; left: 50%; transform: translateX(-50%);
+    width: 28%; aspect-ratio: 1; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; color: #111; z-index: 3;
+    box-shadow: 0 3px 8px rgba(0,0,0,.6), inset 0 0 4px rgba(255,255,255,.6);
+    font-size: .75rem;
+  }
+  .buc-rank-gold   { background: linear-gradient(135deg, #f6e6a8, #d4af37); font-size: .9rem; }
+  .buc-rank-silver { background: linear-gradient(135deg, #fff, #94a3b8); }
+  .buc-rank-bronze { background: linear-gradient(135deg, #fcd34d, #cd7f32); }
+
+  /* Text overlay */
+  .buc-sub  { font-size: .65rem; color: rgba(255,255,255,.5); margin-top: 24px; text-align: center; }
+  .buc-name { font-weight: 700; font-size: .75rem; line-height: 1.2; text-align: center; margin-top: 1px; word-break: break-word; }
+  .buc-name-gold   { color: var(--gold-200); font-size: .85rem; }
+  .buc-name-silver { color: #cbd5e1; }
+  .buc-name-bronze { color: #f6c768; }
+  .buc-votes { font-weight: 800; line-height: 1; text-align: center; margin-top: 4px; text-shadow: 0 2px 6px rgba(0,0,0,.7); }
+  .buc-votes-gold   { font-size: clamp(1.3rem,4vw,2rem); color: var(--gold-200); }
+  .buc-votes-silver { font-size: clamp(1.0rem,3vw,1.5rem); color: #cbd5e1; }
+  .buc-votes-bronze { font-size: clamp(1.0rem,3vw,1.5rem); color: #f6c768; }
+  .buc-vote-lbl { font-size: .55rem; color: rgba(255,255,255,.4); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+
+  /* ── Gold divider ── */
+  .gold-divider {
+    height: 2px; margin: 8px 0 20px;
+    background: linear-gradient(90deg, transparent, var(--gold-400) 20%, var(--gold-200) 50%, var(--gold-400) 80%, transparent);
+    box-shadow: 0 0 12px rgba(212,175,55,.3); border-radius: 999px;
+  }
+
+  /* ── List rows 4–10 ── */
+  .list-rows { display: flex; flex-direction: column; gap: 7px; }
+
+  .list-row {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(8,15,40,.55);
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 12px; padding: 10px 14px;
+    transition: background .2s, border-color .2s;
+  }
+  .list-row:hover { background: rgba(212,175,55,.07); border-color: rgba(212,175,55,.2); }
+
+  .list-rank { font-size: 1.25rem; font-weight: 700; color: var(--gold-400); width: 26px; text-align: center; flex-shrink: 0; }
+
+  .list-thumb { width: 68px; height: 44px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,.1); }
+  .list-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .list-info { flex: 1; min-width: 0; }
+  .list-name { font-weight: 600; font-size: .88rem; color: #fff; line-height: 1.3; }
+  .list-bar-wrap { margin-top: 5px; height: 3px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
+  .list-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff); box-shadow: 0 0 8px var(--gold-200); transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+  .list-votes { text-align: right; flex-shrink: 0; }
+  .list-votes strong { font-size: 1rem; font-weight: 700; color: #fff; display: block; }
+  .list-votes small { font-size: .58rem; color: rgba(255,255,255,.4); letter-spacing: 1.5px; text-transform: uppercase; }
+
+  /* ── Bottom ribbon ── */
+  .bottom-ribbon { display: flex; justify-content: center; margin-top: 40px; }
+  .bottom-ribbon img { width: 100%; max-width: 560px; object-fit: contain; }
+
+  /* ── Vote bump animation ── */
+  @keyframes bump { 0%{transform:scale(1.3)} 100%{transform:scale(1)} }
+  .bump { animation: bump .35s ease-out; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="live-badge"><span class="live-dot"></span> LIVE UPDATE</div>
+    <div class="tag-script">BẢNG XẾP HẠNG</div>
+    <h1 class="main-title">
+      <span class="l1">DOANH NGHIỆP DU LỊCH</span>
+      <span class="l2">LỮ HÀNH XANH HÀNG ĐẦU</span>
+    </h1>
+    <div class="subtitle-pill">
+      <img src="/extracted_assets/top1_crown.png" style="height:18px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(212,175,55,.6))" onerror="this.replaceWith(document.createTextNode('👑'))">
+      TOP 10 ĐỀ CỬ DẪN ĐẦU
+    </div>
+  </header>
+
+  <!-- ── PODIUM ── -->
+  <div class="podium-buc" id="podium"></div>
+
+  <div class="gold-divider"></div>
+
+  <!-- ── LIST 4–10 ── -->
+  <div class="list-rows" id="list"></div>
+
+</div>
+
+<script>
+// ── Data ────────────────────────────────────────────────────────────────────
+const IMAGES = [
+  'https://picsum.photos/seed/halong/600/400',
+  'https://picsum.photos/seed/citynight/600/400',
+  'https://picsum.photos/seed/terrace99/600/400',
+  'https://picsum.photos/seed/resort88/600/400',
+  'https://picsum.photos/seed/beach55/600/400',
+  'https://picsum.photos/seed/mountain33/600/400',
+  'https://picsum.photos/seed/roadtrip/600/400',
+  'https://picsum.photos/seed/waterfall7/600/400',
+  'https://picsum.photos/seed/balloon9/600/400',
+  'https://picsum.photos/seed/seascape2/600/400',
+];
+
+let entries = [15109,13982,13050,11652,10448,9243,8364,7099,5454,4493].map((v,i) => ({
+  id: i,
+  name: `Đề cử xuất sắc số ${String(i+1).padStart(2,'0')}`,
+  votes: v,
+  image: IMAGES[i],
+}));
+
+// ── Asset paths ──────────────────────────────────────────────────────────────
+const RING_IMGS   = ['/extracted_assets/top1_ring.png', '/extracted_assets/top2_ring.png', '/extracted_assets/top2_ring.png'];
+const RING_FILTER = ['none', 'none', 'hue-rotate(-160deg) saturate(1.5)'];
+
+function fmt(n) { return n.toLocaleString('vi-VN'); }
+
+// ── Render podium using Buc.png as single base ───────────────────────────────
+// Buc.png: 1536×1024. Card centers (% of image): silver=16.5%, gold=50%, bronze=83.2%
+// Display order in image: silver(left) | gold(center) | bronze(right)
+// entries[0]=rank1(gold), entries[1]=rank2(silver), entries[2]=rank3(bronze)
+// Card positions: Buc.png 1536×1024, 3 equal cards, centers at 16.5%/50%/83.2%
+// cardW = panel width as % of container; ringW = ring as % of cardW
+const CARD_CFG = [
+  { entry: 1, left: '18.5%', top: '18%', cardW: '31%', ringW: '46%', rank: 2, type: 'silver' },
+  { entry: 0, left: '50%',   top: '12%', cardW: '34%', ringW: '48%', rank: 1, type: 'gold'   },
+  { entry: 2, left: '81.5%', top: '18%', cardW: '31%', ringW: '46%', rank: 3, type: 'bronze' },
+];
+
+function renderPodium() {
+  const cards = CARD_CFG.map(cfg => {
+    const e = entries[cfg.entry];
+    return `
+    <div class="buc-card" style="left:${cfg.left};top:${cfg.top};width:${cfg.cardW}">
+      <!-- Ring + photo (sized as % of card width) -->
+      <div class="buc-ring-wrap" style="width:${cfg.ringW};margin:0 auto">
+        <div class="buc-photo"><img src="${e.image}" alt="${e.name}" loading="lazy"></div>
+        <img class="buc-ring" src="${RING_IMGS[cfg.entry]}" alt="" style="filter:${RING_FILTER[cfg.entry]}">
+        <div class="buc-rank buc-rank-${cfg.type}">${cfg.rank}</div>
+      </div>
+      <!-- Text -->
+      <div class="buc-sub">Đề cử xuất sắc</div>
+      <div class="buc-name buc-name-${cfg.type}">${e.name}</div>
+      <div class="buc-votes buc-votes-${cfg.type}" id="pv-${e.id}">${fmt(e.votes)}</div>
+      <div class="buc-vote-lbl">Lượt Vote</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('podium').innerHTML = `
+    <img class="buc-img" src="/extracted_assets/Buc.png" alt="">
+    <img class="buc-crown" src="/extracted_assets/top1_crown.png" alt="">
+    ${cards}`;
+}
+
+// ── Render list ──────────────────────────────────────────────────────────────
+function renderList() {
+  const maxV = entries[0].votes;
+  document.getElementById('list').innerHTML = entries.slice(3).map((e,i) => {
+    const pct = Math.max(8, (e.votes/maxV)*100);
+    return `
+    <div class="list-row">
+      <div class="list-rank">${i+4}</div>
+      <div class="list-thumb"><img src="${e.image}" alt="${e.name}" loading="lazy"></div>
+      <div class="list-info">
+        <div class="list-name">${e.name}</div>
+        <div class="list-bar-wrap"><div class="list-bar" id="lb-${e.id}" style="width:${pct}%"></div></div>
+      </div>
+      <div class="list-votes">
+        <strong id="lv-${e.id}">${fmt(e.votes)}</strong>
+        <small>Lượt Vote</small>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+renderPodium();
+renderList();
+
+// ── Live update ──────────────────────────────────────────────────────────────
+setInterval(() => {
+  const n = Math.floor(Math.random()*3)+1;
+  for (let k=0; k<n; k++) {
+    const idx = Math.floor(Math.random()*entries.length);
+    entries[idx] = {...entries[idx], votes: entries[idx].votes + Math.floor(Math.random()*30)+5};
+  }
+  entries.sort((a,b)=>b.votes-a.votes);
+  const maxV = entries[0].votes;
+
+  // Update podium votes
+  entries.slice(0,3).forEach(e => {
+    const el = document.getElementById(`pv-${e.id}`);
+    if (el) { el.textContent = fmt(e.votes); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  });
+
+  // Update list votes + bars
+  entries.slice(3).forEach(e => {
+    const lv  = document.getElementById(`lv-${e.id}`);
+    const bar = document.getElementById(`lb-${e.id}`);
+    if (lv)  { lv.textContent = fmt(e.votes); lv.classList.remove('bump'); void lv.offsetWidth; lv.classList.add('bump'); }
+    if (bar) bar.style.width = Math.max(8,(e.votes/maxV)*100)+'%';
+  });
+}, 2500);
+
+// ── Sparkles ─────────────────────────────────────────────────────────────────
+for (let i=0; i<22; i++) {
+  const el = document.createElement('div');
+  el.className = 'sp';
+  const s = Math.random()*2.5+.8;
+  el.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}vw;top:${Math.random()*100}vh;background:${Math.random()>.5?'#d4af37':'#fff'};--d:${(Math.random()*3+2).toFixed(1)}s;--dl:${(Math.random()*3).toFixed(1)}s`;
+  document.body.appendChild(el);
+}
+</script>
+</body>
+</html>

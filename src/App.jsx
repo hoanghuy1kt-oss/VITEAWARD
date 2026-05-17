@@ -8,6 +8,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import ChangePasswordModal from './components/ChangePasswordModal';
+import FloatingStars from './components/FloatingStars';
 
 import Home from './pages/Home';
 import About from './pages/About';
@@ -56,7 +57,7 @@ export default function App() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-
+        <FloatingStars />
         <Header onOpenModal={() => setIsModalOpen(true)} />
         <main style={{ minHeight: '100vh' }}>
           <AnimatedRoutes />

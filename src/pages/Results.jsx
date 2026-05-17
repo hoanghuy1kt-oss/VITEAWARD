@@ -73,12 +73,9 @@ export default function Results() {
 
   const top = [...leaderboard].sort((a,b) => b.votes - a.votes);
   const max = top[0]?.votes || 1;
-
   return (
     <PageTransition>
       <section id="winners" style={{ paddingTop: '120px', paddingBottom: '100px', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-        {/* Bản đồ nền */}
-        <img src="/extracted_assets/map_bg.png" style={{ position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%)', width: '100%', minWidth: '800px', maxWidth: '1200px', opacity: 0.6, zIndex: 0, pointerEvents: 'none', mixBlendMode: 'screen' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <ScrollReveal>
             <div className="section-head" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -205,26 +202,26 @@ export default function Results() {
 
                             {/* Crown for Top 1 */}
                             {isTop1 && (
-                              <img src="/extracted_assets/top1_crown.png" alt="Crown" style={{ position: 'absolute', top: '-12%', left: '50%', transform: 'translateX(-50%)', width: '38%', zIndex: 3, animation: 'float 3s ease-in-out infinite' }} />
+                              <img src="/extracted_assets/top1_crown.png" alt="Crown" style={{ position: 'absolute', top: '-8%', left: '50%', transform: 'translateX(-50%)', width: '45%', zIndex: 10, animation: 'float 3s ease-in-out infinite', objectFit: 'contain' }} />
                             )}
 
                             {/* Avatar & Ring Container */}
-                            <div style={{ position: 'absolute', top: isTop1 ? '2%' : '4%', width: '45%', aspectRatio: '1/1', zIndex: 2 }}>
+                            <div style={{ position: 'absolute', top: isTop1 ? '0%' : '3%', width: '50%', aspectRatio: '1/1', zIndex: 5 }}>
                                {/* Inner Avatar Image */}
-                               <div style={{ width: '82%', height: '82%', position: 'absolute', top: '9%', left: '9%', borderRadius: '50%', overflow: 'hidden' }}>
+                               <div style={{ width: '84%', height: '84%', position: 'absolute', top: '8%', left: '8%', borderRadius: '50%', overflow: 'hidden', zIndex: 6, background: '#050d28' }}>
                                   <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                </div>
                                
                                {/* Metallic Ring */}
-                               <img src={`/extracted_assets/${ringImg}`} alt="Ring" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 2, filter: !isTop1 && !isTop2 ? 'hue-rotate(-160deg) saturate(1.5)' : 'none' }} />
+                               <img src={`/extracted_assets/${ringImg}`} alt="Ring" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 7, filter: !isTop1 && !isTop2 ? 'hue-rotate(-160deg) saturate(1.5)' : 'none', objectFit: 'contain' }} />
                                
                                {/* Rank Badge */}
                                <div style={{ 
                                  position: 'absolute', 
-                                 bottom: '-8%', 
+                                 bottom: '-5%', 
                                  left: '50%', 
                                  transform: 'translateX(-50%)', 
-                                 width: '32%', 
+                                 width: '35%', 
                                  aspectRatio: '1/1', 
                                  background: badgeGradient, 
                                  borderRadius: '50%', 
@@ -234,8 +231,8 @@ export default function Results() {
                                  justifyContent: 'center', 
                                  color: '#111', 
                                  fontWeight: '800', 
-                                 fontSize: '1rem', 
-                                 zIndex: 3,
+                                 fontSize: '1.2rem', 
+                                 zIndex: 8,
                                  boxShadow: '0 4px 10px rgba(0,0,0,0.5)'
                                }}>
                                  {i + 1}
@@ -243,28 +240,27 @@ export default function Results() {
                             </div>
 
                             {/* Name Content */}
-                            <div style={{ position: 'absolute', top: '48%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', textAlign: 'center', zIndex: 2 }}>
-                               <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.7)', fontFamily: 'Be Vietnam Pro', marginBottom: '6px' }}>Đề cử xuất sắc</div>
-                               <div style={{ fontSize: '1rem', color: textColor, fontWeight: '600', fontFamily: 'Be Vietnam Pro', padding: '0 10px' }}>{n.name}</div>
+                            <div style={{ position: 'absolute', top: '48%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', textAlign: 'center', zIndex: 5 }}>
+                               <div style={{ fontSize: '1.1rem', color: textColor, fontWeight: '700', fontFamily: 'Be Vietnam Pro', padding: '0 10px', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{n.name}</div>
                             </div>
 
                             {/* Vote Count & Laurels */}
-                            <div style={{ position: 'absolute', bottom: isTop1 ? '15%' : '18%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2 }}>
-                               <img src={`/extracted_assets/${laurelLeft}`} alt="Laurel Left" style={{ width: '22%', marginRight: '2px' }} />
+                            <div style={{ position: 'absolute', bottom: isTop1 ? '16%' : '18%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 5 }}>
+                               <img src={`/extracted_assets/${laurelLeft}`} alt="Laurel Left" style={{ width: '25%', marginRight: '5px', objectFit: 'contain' }} />
                                
                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                  <motion.strong
                                     key={n.votes}
                                     initial={{ color: '#fff', scale: 1.2 }}
                                     animate={{ color: textColor, scale: 1 }}
-                                    style={{ fontSize: isTop1 ? '2.2rem' : '1.8rem', fontWeight: '700', fontFamily: 'Be Vietnam Pro', lineHeight: 1 }}
+                                    style={{ fontSize: isTop1 ? '2.4rem' : '1.8rem', fontWeight: '800', fontFamily: 'Be Vietnam Pro', lineHeight: 1, textShadow: '0 2px 5px rgba(0,0,0,0.5)' }}
                                  >
                                    {n.votes.toLocaleString('vi-VN')}
                                  </motion.strong>
-                                 <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '1px', marginTop: '6px' }}>{t('results.votes')}</span>
+                                 <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.8)', letterSpacing: '2px', marginTop: '4px', textTransform: 'uppercase' }}>{t('results.votes')}</span>
                                </div>
                                
-                               <img src={`/extracted_assets/${laurelRight}`} alt="Laurel Right" style={{ width: '22%', marginLeft: '2px' }} />
+                               <img src={`/extracted_assets/${laurelRight}`} alt="Laurel Right" style={{ width: '25%', marginLeft: '5px', objectFit: 'contain' }} />
                             </div>
 
                           </motion.div>
@@ -370,11 +366,6 @@ export default function Results() {
               </div>
             </div>
           </ScrollReveal>
-
-          {/* Dải ruy băng ở đáy */}
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '60px', paddingBottom: '40px', position: 'relative', zIndex: 10 }}>
-            <img src="/extracted_assets/bottom_ribbon.png" style={{ width: '100%', maxWidth: '500px', opacity: 0.9, mixBlendMode: 'screen' }} alt="Ribbon" />
-          </div>
         </div>
       </section>
     </PageTransition>

@@ -323,20 +323,6 @@ export default function Results() {
                           }}>
                             <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           </div>
-
-                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                            <div className="lb-name" style={{ 
-                              fontWeight: '400', 
-                              color: '#fff', 
-                              fontSize: '1rem', 
-                              fontFamily: 'Be Vietnam Pro'
-                            }}>
-                              {n.name}
-                            </div>
-                            <div className="lb-bar" style={{ display: 'block', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '99px', overflow: 'hidden', width: '100%' }}>
-                              <motion.div 
-                                className="lb-bar-fill" 
-                          
                           <div style={{ flex: 1, marginLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#fff', margin: 0 }}>{n.name}</h4>
                             {/* Gold Progress Bar */}
@@ -344,6 +330,7 @@ export default function Results() {
                               <div style={{ width: `${Math.max(10, (n.votes / max) * 100)}%`, height: '100%', background: 'linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff)', boxShadow: '0 0 10px var(--gold-200)' }}></div>
                             </div>
                           </div>
+
 
                           <div className="lb-votes" style={{ textAlign: 'right', minWidth: '90px', marginLeft: '20px' }}>
                             <motion.strong

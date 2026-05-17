@@ -348,6 +348,7 @@ export default function Results() {
                           <div style={{ color: 'rgba(212,175,55,0.5)', fontSize: '1.2rem', paddingLeft: '16px' }}>
                             ›
                           </div>
+                        </motion.div>
                       );
                     })}
                   </div>

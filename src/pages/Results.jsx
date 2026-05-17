@@ -166,7 +166,6 @@ export default function Results() {
                       const isTop2 = i === 1;
                       const isTop3 = i === 2;
                       const rankClass = isTop1 ? 'top1' : isTop2 ? 'top2' : 'top3';
-                      // Sắp xếp thứ tự: Rank 2 bên trái, Rank 1 ở giữa, Rank 3 bên phải
                       const orderIndex = isTop1 ? 2 : isTop2 ? 1 : 3;
 
                       return (
@@ -197,68 +196,77 @@ export default function Results() {
                               zIndex: isTop1 ? 10 : 5
                             }}
                           >
-                            {/* Avatar Phần chóp (Nằm trên bục) */}
-                            <div style={{ position: 'relative', marginBottom: '-50px', zIndex: 2 }}>
+                            {/* Avatar Phần chóp */}
+                            <div style={{ position: 'relative', marginBottom: '-40px', zIndex: 3 }}>
                               <div className="lb-avatar" style={{ 
                                 width: isTop1 ? '110px' : '90px', 
                                 height: isTop1 ? '110px' : '90px', 
                                 borderRadius: '50%', 
                                 overflow: 'hidden', 
-                                border: isTop1 ? '4px solid #d4af37' : isTop2 ? '4px solid #e2e8f0' : '4px solid #cd7f32',
-                                boxShadow: isTop1 ? '0 10px 30px rgba(212,175,55,0.4)' : '0 8px 20px rgba(0,0,0,0.5)',
+                                border: isTop1 ? '3px solid rgba(212,175,55,0.8)' : isTop2 ? '3px solid rgba(192,192,192,0.6)' : '3px solid rgba(205,127,50,0.6)',
+                                boxShadow: isTop1 ? '0 0 20px rgba(212,175,55,0.5)' : '0 0 15px rgba(0,0,0,0.5)',
                                 margin: '0 auto',
-                                background: '#050d28'
+                                background: '#050d28',
+                                position: 'relative'
                               }}>
                                 <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                               </div>
                               
                               {/* Vương miện cho Top 1 */}
                               {isTop1 && (
-                                <div style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '32px', filter: 'drop-shadow(0 4px 8px rgba(212,175,55,0.6))', animation: 'float 3s ease-in-out infinite' }}>
-                                  👑
+                                <div style={{ position: 'absolute', top: '-35px', left: '50%', transform: 'translateX(-50%)', width: '50px', filter: 'drop-shadow(0 4px 8px rgba(212,175,55,0.6))', animation: 'float 3s ease-in-out infinite' }}>
+                                  <svg viewBox="0 0 24 24" fill="url(#gold-gradient)" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                      <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="#f6e6a8" />
+                                        <stop offset="50%" stopColor="#d4af37" />
+                                        <stop offset="100%" stopColor="#aa7c11" />
+                                      </linearGradient>
+                                    </defs>
+                                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                                  </svg>
                                 </div>
                               )}
 
+                              {/* Rank badge overlap */}
                               <div className="rank-badge" style={{
                                 position: 'absolute',
-                                bottom: '-12px',
+                                bottom: '-10px',
                                 left: '50%',
                                 transform: 'translateX(-50%)',
-                                background: isTop1 ? 'linear-gradient(135deg, #f6e6a8, #d4af37)' : isTop2 ? 'linear-gradient(135deg, #ffffff, #94a3b8)' : 'linear-gradient(135deg, #fcd34d, #cd7f32)',
-                                color: '#111',
-                                width: isTop1 ? '36px' : '30px',
-                                height: isTop1 ? '36px' : '30px',
+                                background: '#111',
+                                color: isTop1 ? '#d4af37' : isTop2 ? '#e2e8f0' : '#cd7f32',
+                                width: isTop1 ? '32px' : '28px',
+                                height: isTop1 ? '32px' : '28px',
                                 borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontWeight: '900',
+                                fontWeight: '700',
                                 fontSize: isTop1 ? '16px' : '14px',
+                                border: isTop1 ? '2px solid rgba(212,175,55,0.6)' : isTop2 ? '2px solid rgba(192,192,192,0.4)' : '2px solid rgba(205,127,50,0.4)',
                                 boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-                                border: '3px solid #050d28'
+                                zIndex: 4
                               }}>
                                 {i + 1}
                               </div>
                             </div>
 
-                            {/* Bục vinh quang (Pedestal Block) */}
+                            {/* Card Body */}
                             <div className="podium-block" style={{
                               width: '100%',
-                              height: isTop1 ? '260px' : isTop2 ? '210px' : '180px',
-                              background: isTop1 ? 'linear-gradient(180deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.02) 100%)' 
-                                        : isTop2 ? 'linear-gradient(180deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.02) 100%)' 
-                                        : 'linear-gradient(180deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.02) 100%)',
-                              borderRadius: '20px 20px 12px 12px',
+                              background: isTop1 ? 'linear-gradient(180deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.02) 100%)' 
+                                        : isTop2 ? 'linear-gradient(180deg, rgba(192,192,192,0.08) 0%, rgba(192,192,192,0.02) 100%)' 
+                                        : 'linear-gradient(180deg, rgba(205,127,50,0.08) 0%, rgba(205,127,50,0.02) 100%)',
+                              borderRadius: '16px',
                               backdropFilter: 'blur(16px)',
                               WebkitBackdropFilter: 'blur(16px)',
-                              borderTop: isTop1 ? '2px solid rgba(212,175,55,0.8)' : isTop2 ? '2px solid rgba(192,192,192,0.6)' : '2px solid rgba(205,127,50,0.6)',
-                              borderLeft: isTop1 ? '1px solid rgba(212,175,55,0.2)' : isTop2 ? '1px solid rgba(192,192,192,0.15)' : '1px solid rgba(205,127,50,0.15)',
-                              borderRight: isTop1 ? '1px solid rgba(212,175,55,0.2)' : isTop2 ? '1px solid rgba(192,192,192,0.15)' : '1px solid rgba(205,127,50,0.15)',
-                              borderBottom: '1px solid transparent',
-                              boxShadow: isTop1 ? '0 -10px 40px rgba(212, 175, 55, 0.15), inset 0 20px 40px rgba(212,175,55,0.1)' 
-                                      : isTop2 ? '0 -10px 30px rgba(192, 192, 192, 0.08), inset 0 20px 40px rgba(192,192,192,0.05)'
-                                      : '0 -10px 30px rgba(205, 127, 50, 0.08), inset 0 20px 40px rgba(205,127,50,0.05)',
-                              paddingTop: '64px',
+                              border: isTop1 ? '1px solid rgba(212,175,55,0.4)' : isTop2 ? '1px solid rgba(192,192,192,0.3)' : '1px solid rgba(205,127,50,0.3)',
+                              borderBottom: isTop1 ? '8px solid rgba(212,175,55,0.9)' : isTop2 ? '8px solid rgba(192,192,192,0.7)' : '8px solid rgba(205,127,50,0.7)',
+                              boxShadow: isTop1 ? '0 10px 30px rgba(212, 175, 55, 0.1), inset 0 0 20px rgba(212,175,55,0.05)' 
+                                       : isTop2 ? '0 10px 20px rgba(192, 192, 192, 0.05)'
+                                       : '0 10px 20px rgba(205, 127, 50, 0.05)',
+                              paddingTop: '60px',
                               paddingBottom: '24px',
                               paddingLeft: '20px',
                               paddingRight: '20px',
@@ -266,72 +274,59 @@ export default function Results() {
                               overflow: 'hidden',
                               display: 'flex',
                               flexDirection: 'column',
-                              justifyContent: 'space-between',
+                              alignItems: 'center',
                               zIndex: 1
                             }}>
-                              {/* Số Background khổng lồ (Watermark) */}
-                              <div style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                fontSize: isTop1 ? '14rem' : '11rem',
-                                fontWeight: '900',
-                                color: isTop1 ? 'rgba(212,175,55,0.05)' : isTop2 ? 'rgba(255,255,255,0.03)' : 'rgba(205,127,50,0.04)',
-                                pointerEvents: 'none',
-                                fontFamily: 'Playfair Display',
-                                lineHeight: 1,
-                                zIndex: 0
-                              }}>
-                                {i + 1}
+                              <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', marginBottom: '8px', fontFamily: 'Be Vietnam Pro' }}>
+                                Đề cử xuất sắc
                               </div>
-                              
-                              {/* Shimmer Effect */}
-                              {isTop1 && (
-                                <div style={{ position: 'absolute', top: 0, left: '-100%', width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)', transform: 'skewX(-20deg)', animation: 'shimmer 3s infinite', zIndex: 1 }} />
-                              )}
-                              
                               <div className="lb-name" style={{ 
-                                fontWeight: '500', 
-                                color: isTop1 ? 'var(--gold-200)' : '#fff', 
-                                fontSize: isTop1 ? '1.2rem' : '1.1rem', 
+                                fontWeight: '600', 
+                                color: isTop1 ? '#d4af37' : '#fff', 
+                                fontSize: '1.1rem', 
                                 fontFamily: 'Be Vietnam Pro',
-                                letterSpacing: '0.5px',
-                                lineHeight: '1.4',
                                 textAlign: 'center',
                                 zIndex: 2,
-                                textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                                textShadow: isTop1 ? '0 2px 4px rgba(212,175,55,0.3)' : 'none',
+                                marginBottom: '16px'
                               }}>
                                 {n.name}
                               </div>
 
-                              <div className="lb-votes-podium" style={{ marginTop: 'auto', width: '100%', zIndex: 2, textAlign: 'center' }}>
-                                <motion.strong
-                                  key={n.votes}
-                                  initial={{ color: '#fff', scale: 1.2 }}
-                                  animate={{ color: isTop1 ? 'var(--gold-300)' : isTop2 ? '#e2e8f0' : '#fcd34d', scale: 1 }}
-                                  style={{ fontFamily: 'Be Vietnam Pro', fontSize: isTop1 ? '2.2rem' : '1.8rem', fontWeight: '500', display: 'block', lineHeight: 1, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
-                                >
-                                  {n.votes.toLocaleString('vi-VN')}
-                                </motion.strong>
-                                <small style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '2px', marginTop: '6px', marginBottom: '14px' }}>{t('results.votes')}</small>
-                                
-                                <div className="lb-bar" style={{ display: 'block', width: '100%', height: '6px', background: 'rgba(0,0,0,0.2)', borderRadius: '99px', overflow: 'hidden' }}>
-                                  <motion.div 
-                                    className="lb-bar-fill" 
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${pct}%` }}
-                                    transition={{ duration: 0.5 }}
-                                    style={{ 
-                                      height: '100%', 
-                                      background: isTop1 ? 'linear-gradient(90deg, #d4af37, #f6e6a8)' 
-                                                : isTop2 ? 'linear-gradient(90deg, #94a3b8, #e2e8f0)' 
-                                                : 'linear-gradient(90deg, #cd7f32, #fcd34d)', 
-                                      borderRadius: '99px',
-                                      boxShadow: '0 0 10px rgba(255,255,255,0.2)'
-                                    }}
-                                  />
+                              <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                {/* Laurel Wreath Left */}
+                                {isTop1 && (
+                                  <svg style={{ position: 'absolute', left: '10px', width: '40px', opacity: 0.6 }} viewBox="0 0 100 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M90 140 C50 120, 20 80, 20 30" stroke="#d4af37" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+                                    <path d="M20 30 Q10 20 20 10 Q30 20 20 30" fill="#d4af37" />
+                                    <path d="M25 60 Q10 50 25 40 Q40 50 25 60" fill="#d4af37" />
+                                    <path d="M35 90 Q15 80 35 70 Q55 80 35 90" fill="#d4af37" />
+                                    <path d="M55 120 Q35 110 55 100 Q75 110 55 120" fill="#d4af37" />
+                                  </svg>
+                                )}
+
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2 }}>
+                                  <motion.strong
+                                    key={n.votes}
+                                    initial={{ color: '#fff', scale: 1.2 }}
+                                    animate={{ color: isTop1 ? '#d4af37' : isTop2 ? '#e2e8f0' : '#cd7f32', scale: 1 }}
+                                    style={{ fontFamily: 'Be Vietnam Pro', fontSize: isTop1 ? '2.4rem' : '1.8rem', fontWeight: '700', lineHeight: 1 }}
+                                  >
+                                    {n.votes.toLocaleString('vi-VN')}
+                                  </motion.strong>
+                                  <small style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '2px', marginTop: '4px' }}>{t('results.votes')}</small>
                                 </div>
+
+                                {/* Laurel Wreath Right */}
+                                {isTop1 && (
+                                  <svg style={{ position: 'absolute', right: '10px', width: '40px', opacity: 0.6, transform: 'scaleX(-1)' }} viewBox="0 0 100 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M90 140 C50 120, 20 80, 20 30" stroke="#d4af37" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+                                    <path d="M20 30 Q10 20 20 10 Q30 20 20 30" fill="#d4af37" />
+                                    <path d="M25 60 Q10 50 25 40 Q40 50 25 60" fill="#d4af37" />
+                                    <path d="M35 90 Q15 80 35 70 Q55 80 35 90" fill="#d4af37" />
+                                    <path d="M55 120 Q35 110 55 100 Q75 110 55 120" fill="#d4af37" />
+                                  </svg>
+                                )}
                               </div>
                             </div>
                           </motion.div>
@@ -341,7 +336,7 @@ export default function Results() {
                   </div>
 
                   {/* DANH SÁCH cho Top 4-10 */}
-                  <div className="list-container" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div className="list-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {top.slice(3).map((n, idx) => {
                       const i = idx + 3; // true rank index (3 to 9)
                       const pct = (n.votes / max) * 100;
@@ -356,63 +351,60 @@ export default function Results() {
                           className="lb-row" 
                           key={n.id}
                           style={{ 
-                            background: 'rgba(255, 255, 255, 0.02)', 
+                            background: 'rgba(255, 255, 255, 0.03)', 
                             borderRadius: '12px', 
                             padding: '12px 20px', 
                             display: 'flex', 
                             alignItems: 'center',
-                            flexWrap: 'wrap',
-                            border: '1px solid transparent',
-                            gap: '16px',
-                            position: 'relative',
-                            overflow: 'hidden'
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            gap: '20px',
+                            position: 'relative'
                           }}
                         >
                           <div className="rank" style={{ 
-                            fontSize: '1.1rem', 
-                            fontWeight: '400', 
-                            textAlign: 'center', 
-                            width: '40px', 
-                            color: 'var(--text-muted)', 
-                            fontFamily: 'Be Vietnam Pro'
+                            fontSize: '1.4rem', 
+                            fontWeight: '600', 
+                            color: '#d4af37', 
+                            fontFamily: 'Be Vietnam Pro',
+                            width: '30px',
+                            textAlign: 'center'
                           }}>
-                            #{i + 1}
+                            {i + 1}
                           </div>
                           
-                          <div className="lb-info" style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: '1 1 200px' }}>
-                            <div className="lb-avatar" style={{ 
-                              width: '40px', 
-                              height: '40px', 
-                              borderRadius: '8px', 
-                              overflow: 'hidden', 
-                              flexShrink: 0, 
-                              border: '1px solid rgba(255,255,255,0.1)'
-                            }}>
-                              <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            </div>
+                          <div className="lb-avatar" style={{ 
+                            width: '48px', 
+                            height: '48px', 
+                            borderRadius: '12px', 
+                            overflow: 'hidden', 
+                            flexShrink: 0, 
+                            border: '1px solid rgba(255,255,255,0.1)'
+                          }}>
+                            <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          </div>
+
+                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                             <div className="lb-name" style={{ 
                               fontWeight: '400', 
                               color: '#fff', 
-                              fontSize: '0.95rem', 
-                              fontFamily: 'Be Vietnam Pro',
-                              letterSpacing: '0.5px'
+                              fontSize: '1rem', 
+                              fontFamily: 'Be Vietnam Pro'
                             }}>
                               {n.name}
                             </div>
-                          </div>
-
-                          <div className="lb-bar" style={{ display: 'block', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '99px', overflow: 'hidden', flex: '1 1 120px', maxWidth: '200px' }}>
-                            <motion.div 
-                              className="lb-bar-fill" 
-                              initial={{ width: 0 }}
-                              animate={{ width: `${pct}%` }}
-                              transition={{ duration: 0.5 }}
-                              style={{ 
-                                height: '100%', 
-                                background: 'linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.4))', 
-                                borderRadius: '99px'
-                              }}
-                            />
+                            <div className="lb-bar" style={{ display: 'block', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '99px', overflow: 'hidden', width: '100%' }}>
+                              <motion.div 
+                                className="lb-bar-fill" 
+                                initial={{ width: 0 }}
+                                animate={{ width: `${pct}%` }}
+                                transition={{ duration: 0.5 }}
+                                style={{ 
+                                  height: '100%', 
+                                  background: 'linear-gradient(90deg, #d4af37, #f6e6a8)', 
+                                  borderRadius: '99px'
+                                }}
+                              />
+                            </div>
                           </div>
 
                           <div className="lb-votes" style={{ textAlign: 'right', minWidth: '90px' }}>
@@ -420,11 +412,11 @@ export default function Results() {
                               key={n.votes}
                               initial={{ color: '#fff', scale: 1.2 }}
                               animate={{ color: '#fff', scale: 1 }}
-                              style={{ fontFamily: 'Be Vietnam Pro', fontSize: '1.1rem', fontWeight: '400' }}
+                              style={{ fontFamily: 'Be Vietnam Pro', fontSize: '1.2rem', fontWeight: '500' }}
                             >
                               {n.votes.toLocaleString('vi-VN')}
                             </motion.strong>
-                            <small style={{ display: 'block', fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px' }}>{t('results.votes')}</small>
+                            <small style={{ display: 'block', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('results.votes')}</small>
                           </div>
                         </motion.div>
                       );

@@ -3977,7 +3977,7 @@
 @media (max-width: 900px) {
   .podium-grid {
     grid-template-columns: 1fr !important;
-    gap: 40px !important;
+    gap: 60px !important;
   }
   .podium-wrapper.top1 { order: 1 !important; }
   .podium-wrapper.top2 { order: 2 !important; }

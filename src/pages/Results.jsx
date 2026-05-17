@@ -148,6 +148,13 @@ export default function Results() {
                   {top.map((n, i) => {
                     const pct = (n.votes / max) * 100;
                     const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+                    
+                    // Design variables based on rank
+                    const isTop1 = i === 0;
+                    const isTop2 = i === 1;
+                    const isTop3 = i === 2;
+                    const isTop3Any = i < 3;
+
                     return (
                       <motion.div 
                         layout
@@ -158,49 +165,100 @@ export default function Results() {
                         className={`lb-row ${rankClass}`} 
                         key={n.id}
                         style={{ 
-                          marginBottom: '16px', 
-                          background: i === 0 ? 'rgba(212, 175, 55, 0.08)' : i === 1 ? 'rgba(192, 192, 192, 0.05)' : i === 2 ? 'rgba(205, 127, 50, 0.05)' : 'rgba(255, 255, 255, 0.02)', 
+                          marginBottom: isTop3Any ? '20px' : '12px', 
+                          background: isTop1 ? 'linear-gradient(90deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.02) 100%)' 
+                                    : isTop2 ? 'linear-gradient(90deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.02) 100%)' 
+                                    : isTop3 ? 'linear-gradient(90deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.02) 100%)' 
+                                    : 'rgba(255, 255, 255, 0.02)', 
                           borderRadius: '16px', 
-                          padding: '16px 20px', 
-                          display: 'grid', 
+                          padding: isTop1 ? '24px 20px' : isTop3Any ? '20px' : '16px 20px', 
+                          display: 'flex', 
                           alignItems: 'center',
-                          border: i === 0 ? '1px solid rgba(212, 175, 55, 0.4)' : i === 1 ? '1px solid rgba(192, 192, 192, 0.3)' : i === 2 ? '1px solid rgba(205, 127, 50, 0.3)' : '1px solid transparent',
-                          boxShadow: i === 0 ? '0 10px 30px rgba(212, 175, 55, 0.15)' : 'none',
-                          gridTemplateColumns: '50px 1fr 180px 120px',
-                          gap: '16px'
+                          flexWrap: 'wrap',
+                          border: isTop1 ? '1px solid rgba(212, 175, 55, 0.5)' 
+                                : isTop2 ? '1px solid rgba(192, 192, 192, 0.4)' 
+                                : isTop3 ? '1px solid rgba(205, 127, 50, 0.4)' 
+                                : '1px solid transparent',
+                          boxShadow: isTop1 ? '0 10px 40px rgba(212, 175, 55, 0.15)' 
+                                   : isTop2 ? '0 10px 30px rgba(192, 192, 192, 0.1)'
+                                   : isTop3 ? '0 10px 30px rgba(205, 127, 50, 0.1)'
+                                   : 'none',
+                          gap: '16px',
+                          position: 'relative',
+                          overflow: 'hidden'
                         }}
                       >
-                        <div className="rank" style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center', width: '50px', color: i === 0 ? '#d4af37' : i === 1 ? '#c0c0c0' : i === 2 ? '#cd7f32' : 'var(--text-muted)', fontFamily: 'Be Vietnam Pro' }}>
-                          {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#' + (i + 1)}
+                        {/* Shimmer effect for Top 1 */}
+                        {isTop1 && (
+                          <div style={{ position: 'absolute', top: 0, left: '-100%', width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)', transform: 'skewX(-20deg)', animation: 'shimmer 3s infinite' }} />
+                        )}
+
+                        <div className="rank" style={{ 
+                          fontSize: isTop1 ? '2.5rem' : isTop3Any ? '2rem' : '1.2rem', 
+                          fontWeight: '400', 
+                          textAlign: 'center', 
+                          width: '50px', 
+                          color: isTop1 ? '#d4af37' : isTop2 ? '#e2e8f0' : isTop3 ? '#cd7f32' : 'var(--text-muted)', 
+                          fontFamily: 'Be Vietnam Pro',
+                          textShadow: isTop3Any ? '0 4px 12px rgba(0,0,0,0.4)' : 'none',
+                          lineHeight: 1
+                        }}>
+                          {isTop1 ? '🥇' : isTop2 ? '🥈' : isTop3 ? '🥉' : '#' + (i + 1)}
                         </div>
-                        <div className="lb-info" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                          <div className="lb-avatar" style={{ width: '60px', height: '60px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0, border: '1px solid rgba(255,255,255,0.1)' }}>
+                        
+                        <div className="lb-info" style={{ display: 'flex', alignItems: 'center', gap: '20px', flex: '1 1 250px' }}>
+                          <div className="lb-avatar" style={{ 
+                            width: isTop1 ? '70px' : isTop3Any ? '60px' : '45px', 
+                            height: isTop1 ? '70px' : isTop3Any ? '60px' : '45px', 
+                            borderRadius: isTop1 ? '50%' : '12px', 
+                            overflow: 'hidden', 
+                            flexShrink: 0, 
+                            border: isTop1 ? '2px solid #d4af37' : isTop2 ? '2px solid #e2e8f0' : isTop3 ? '2px solid #cd7f32' : '1px solid rgba(255,255,255,0.1)',
+                            boxShadow: isTop3Any ? '0 4px 15px rgba(0,0,0,0.3)' : 'none'
+                          }}>
                             <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           </div>
                           <div>
-                            <div className="lb-name" style={{ fontWeight: '700', color: i === 0 ? 'var(--gold-200)' : '#fff', fontSize: '1.1rem', marginBottom: '6px', fontFamily: 'Be Vietnam Pro' }}>{n.name}</div>
-                            <div className="lb-cat" style={{ color: 'var(--text-soft)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{isEn ? 'Category ' : 'Đề cử Hạng mục '}{selectedSub?.id}</div>
+                            <div className="lb-name" style={{ 
+                              fontWeight: '400', 
+                              color: isTop1 ? 'var(--gold-200)' : '#fff', 
+                              fontSize: isTop1 ? '1.2rem' : isTop3Any ? '1.1rem' : '1rem', 
+                              fontFamily: 'Be Vietnam Pro',
+                              letterSpacing: '0.5px'
+                            }}>
+                              {n.name}
+                            </div>
                           </div>
                         </div>
-                        <div className="lb-bar" style={{ display: 'block', width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '99px', overflow: 'hidden', marginLeft: 'auto', maxWidth: '180px' }}>
+
+                        <div className="lb-bar" style={{ display: 'block', width: '100%', height: isTop3Any ? '10px' : '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '99px', overflow: 'hidden', flex: '1 1 150px', maxWidth: '250px' }}>
                           <motion.div 
                             className="lb-bar-fill" 
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
                             transition={{ duration: 0.5 }}
-                            style={{ height: '100%', background: i === 0 ? 'linear-gradient(90deg, #d4af37, #f6e6a8)' : 'linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.7))', borderRadius: '99px' }}
+                            style={{ 
+                              height: '100%', 
+                              background: isTop1 ? 'linear-gradient(90deg, #d4af37, #f6e6a8)' 
+                                        : isTop2 ? 'linear-gradient(90deg, #94a3b8, #e2e8f0)' 
+                                        : isTop3 ? 'linear-gradient(90deg, #cd7f32, #fcd34d)' 
+                                        : 'linear-gradient(90deg, rgba(255,255,255,0.2), rgba(255,255,255,0.5))', 
+                              borderRadius: '99px',
+                              boxShadow: isTop3Any ? '0 0 10px rgba(255,255,255,0.2)' : 'none'
+                            }}
                           />
                         </div>
-                        <div className="lb-votes" style={{ textAlign: 'right', minWidth: '120px' }}>
+
+                        <div className="lb-votes" style={{ textAlign: 'right', minWidth: '100px' }}>
                           <motion.strong
                             key={n.votes}
                             initial={{ color: '#fff', scale: 1.2 }}
-                            animate={{ color: i === 0 ? 'var(--gold-300)' : 'var(--gold-200)', scale: 1 }}
-                            style={{ fontFamily: 'Be Vietnam Pro', fontSize: '1.4rem' }}
+                            animate={{ color: isTop1 ? 'var(--gold-300)' : isTop2 ? '#e2e8f0' : isTop3 ? '#fcd34d' : 'var(--gold-200)', scale: 1 }}
+                            style={{ fontFamily: 'Be Vietnam Pro', fontSize: isTop1 ? '1.6rem' : isTop3Any ? '1.4rem' : '1.2rem', fontWeight: '400' }}
                           >
                             {n.votes.toLocaleString('vi-VN')}
                           </motion.strong>
-                          <small style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px' }}>{t('results.votes')}</small>
+                          <small style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px' }}>{t('results.votes')}</small>
                         </div>
                       </motion.div>
                     );

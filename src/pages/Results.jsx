@@ -75,9 +75,7 @@ export default function Results() {
   const max = top[0]?.votes || 1;
   return (
     <PageTransition>
-      <section id="winners" style={{ paddingTop: '120px', paddingBottom: '100px', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
-        {/* Bản đồ nền */}
-        <img src="/extracted_assets/map_bg.png" style={{ position: 'absolute', top: '10%', left: '50%', transform: 'translateX(-50%)', width: '100vw', opacity: 0.3, zIndex: 0, pointerEvents: 'none', objectFit: 'cover' }} />
+      <section id="winners" style={{ paddingTop: '120px', paddingBottom: '100px', minHeight: '100vh', position: 'relative' }}>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <ScrollReveal>
             <div className="section-head" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -133,8 +131,11 @@ export default function Results() {
             </div>
 
             {/* TẦNG 3: BẢNG XẾP HẠNG (LEADERBOARD) */}
-            <div className="winner-board" style={{ background: 'rgba(5, 13, 40, 0.4)', borderRadius: '24px', padding: '32px', border: '1px solid rgba(212, 175, 55, 0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' }}>
-              <div className="winner-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid var(--line)', paddingBottom: '20px', marginBottom: '24px' }}>
+            <div className="winner-board" style={{ position: 'relative', overflow: 'hidden', background: 'rgba(5, 13, 40, 0.4)', borderRadius: '24px', padding: '32px', border: '1px solid rgba(212, 175, 55, 0.15)', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' }}>
+              {/* Bản đồ nền chỉ nằm trong Bảng xếp hạng */}
+              <img src="/extracted_assets/map_bg.png" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', minWidth: '800px', opacity: 0.3, zIndex: 0, pointerEvents: 'none', mixBlendMode: 'screen' }} />
+              
+              <div className="winner-head" style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid var(--line)', paddingBottom: '20px', marginBottom: '24px' }}>
                 <div>
                   <h3 className="apg-sec-heading" style={{ fontSize: '1.8rem', color: '#fff', textTransform: 'none', letterSpacing: '0' }}>{isEn && selectedSub?.titleEn ? selectedSub.titleEn : selectedSub?.title}</h3>
                   <div className="apg-hero-script" style={{ fontSize: '1.1rem', marginTop: '8px' }}>{isEn ? 'Top 10 Leading Nominees' : 'Top 10 đề cử dẫn đầu'}</div>
@@ -144,7 +145,7 @@ export default function Results() {
                 </div>
               </div>
               
-              <div style={{ position: 'relative', minHeight: '400px' }}>
+              <div style={{ position: 'relative', zIndex: 1, minHeight: '400px' }}>
                 <AnimatePresence>
                   {/* PODIUM cho Top 3 */}
                   <div className="podium-grid" style={{ 

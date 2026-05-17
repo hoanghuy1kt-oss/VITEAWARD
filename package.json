@@ -1,0 +1,23 @@
+{
+  "name": "vita-award",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "vite": "^5.2.0"
+  },
+  "dependencies": {
+    "framer-motion": "^12.38.0",
+    "i18next": "^26.2.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-i18next": "^17.0.8",
+    "react-router-dom": "^7.15.1"
+  }
+}

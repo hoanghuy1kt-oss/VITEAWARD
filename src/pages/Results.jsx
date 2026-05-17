@@ -149,10 +149,17 @@ export default function Results() {
                   <div className="podium-grid" style={{ 
                     display: 'grid', 
                     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-                    gap: '24px', 
-                    marginBottom: '40px',
-                    alignItems: 'end' 
+                    gap: '16px', 
+                    marginBottom: '60px',
+                    alignItems: 'end',
+                    position: 'relative',
+                    paddingTop: '60px'
                   }}>
+                    {/* Spotlights */}
+                    <div className="spotlight" style={{ position: 'absolute', bottom: '0', left: '10%', width: '200px', height: '150%', background: 'linear-gradient(0deg, rgba(255,255,255,0.03) 0%, transparent 100%)', transform: 'skewX(-25deg)', transformOrigin: 'bottom', pointerEvents: 'none', zIndex: 0 }} />
+                    <div className="spotlight" style={{ position: 'absolute', bottom: '0', right: '10%', width: '200px', height: '150%', background: 'linear-gradient(0deg, rgba(255,255,255,0.03) 0%, transparent 100%)', transform: 'skewX(25deg)', transformOrigin: 'bottom', pointerEvents: 'none', zIndex: 0 }} />
+                    <div className="spotlight" style={{ position: 'absolute', bottom: '0', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '150%', background: 'linear-gradient(0deg, rgba(212,175,55,0.06) 0%, transparent 100%)', pointerEvents: 'none', zIndex: 0 }} />
+
                     {top.slice(0, 3).map((n, i) => {
                       const pct = (n.votes / max) * 100;
                       const isTop1 = i === 0;
@@ -163,117 +170,172 @@ export default function Results() {
                       const orderIndex = isTop1 ? 2 : isTop2 ? 1 : 3;
 
                       return (
-                        <motion.div 
-                          layoutId={`card-${n.id}`}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className={`lb-podium-card ${rankClass}`} 
-                          key={n.id}
-                          style={{ 
-                            order: orderIndex,
-                            height: isTop1 ? '340px' : '300px',
-                            background: isTop1 ? 'linear-gradient(180deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.02) 100%)' 
-                                      : isTop2 ? 'linear-gradient(180deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.02) 100%)' 
-                                      : 'linear-gradient(180deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.02) 100%)', 
-                            borderRadius: '24px', 
-                            padding: '30px 20px 24px', 
-                            display: 'flex', 
+                        <div 
+                          key={`wrapper-${n.id}`}
+                          className={`podium-wrapper top${i+1}`}
+                          style={{
+                            display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            border: isTop1 ? '1px solid rgba(212, 175, 55, 0.5)' 
-                                  : isTop2 ? '1px solid rgba(192, 192, 192, 0.4)' 
-                                  : '1px solid rgba(205, 127, 50, 0.4)',
-                            boxShadow: isTop1 ? '0 10px 40px rgba(212, 175, 55, 0.15)' 
-                                     : isTop2 ? '0 10px 30px rgba(192, 192, 192, 0.1)'
-                                     : '0 10px 30px rgba(205, 127, 50, 0.1)',
-                            position: 'relative',
-                            overflow: 'hidden',
-                            textAlign: 'center'
+                            order: orderIndex,
+                            position: 'relative'
                           }}
                         >
-                          {isTop1 && (
-                            <div style={{ position: 'absolute', top: 0, left: '-100%', width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)', transform: 'skewX(-20deg)', animation: 'shimmer 3s infinite' }} />
-                          )}
-
-                          <div style={{ position: 'relative', marginBottom: '16px' }}>
-                            <div className="lb-avatar" style={{ 
-                              width: isTop1 ? '100px' : '85px', 
-                              height: isTop1 ? '100px' : '85px', 
-                              borderRadius: '50%', 
-                              overflow: 'hidden', 
-                              border: isTop1 ? '3px solid #d4af37' : isTop2 ? '3px solid #e2e8f0' : '3px solid #cd7f32',
-                              boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
-                              margin: '0 auto'
-                            }}>
-                              <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            </div>
-                            <div className="rank-badge" style={{
-                              position: 'absolute',
-                              bottom: '-10px',
-                              left: '50%',
-                              transform: 'translateX(-50%)',
-                              background: isTop1 ? 'linear-gradient(135deg, #f6e6a8, #d4af37)' : isTop2 ? 'linear-gradient(135deg, #f3f4f6, #94a3b8)' : 'linear-gradient(135deg, #fcd34d, #cd7f32)',
-                              color: '#111',
-                              width: '28px',
-                              height: '28px',
-                              borderRadius: '50%',
-                              display: 'flex',
+                          <motion.div 
+                            layoutId={`card-${n.id}`}
+                            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            className={`lb-podium-card ${rankClass}`} 
+                            style={{ 
+                              display: 'flex', 
+                              flexDirection: 'column',
                               alignItems: 'center',
-                              justifyContent: 'center',
-                              fontWeight: '900',
-                              fontSize: '14px',
-                              boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
-                              border: '2px solid #050d28'
-                            }}>
-                              {i + 1}
-                            </div>
-                          </div>
-                          
-                          <div className="lb-name" style={{ 
-                            fontWeight: '400', 
-                            color: isTop1 ? 'var(--gold-200)' : '#fff', 
-                            fontSize: isTop1 ? '1.2rem' : '1.1rem', 
-                            fontFamily: 'Be Vietnam Pro',
-                            letterSpacing: '0.5px',
-                            lineHeight: '1.4',
-                            marginBottom: 'auto',
-                            padding: '0 10px'
-                          }}>
-                            {n.name}
-                          </div>
+                              width: '100%',
+                              position: 'relative',
+                              zIndex: isTop1 ? 10 : 5
+                            }}
+                          >
+                            {/* Avatar Phần chóp (Nằm trên bục) */}
+                            <div style={{ position: 'relative', marginBottom: '-50px', zIndex: 2 }}>
+                              <div className="lb-avatar" style={{ 
+                                width: isTop1 ? '110px' : '90px', 
+                                height: isTop1 ? '110px' : '90px', 
+                                borderRadius: '50%', 
+                                overflow: 'hidden', 
+                                border: isTop1 ? '4px solid #d4af37' : isTop2 ? '4px solid #e2e8f0' : '4px solid #cd7f32',
+                                boxShadow: isTop1 ? '0 10px 30px rgba(212,175,55,0.4)' : '0 8px 20px rgba(0,0,0,0.5)',
+                                margin: '0 auto',
+                                background: '#050d28'
+                              }}>
+                                <img src={n.image} alt={n.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              </div>
+                              
+                              {/* Vương miện cho Top 1 */}
+                              {isTop1 && (
+                                <div style={{ position: 'absolute', top: '-24px', left: '50%', transform: 'translateX(-50%)', fontSize: '32px', filter: 'drop-shadow(0 4px 8px rgba(212,175,55,0.6))', animation: 'float 3s ease-in-out infinite' }}>
+                                  👑
+                                </div>
+                              )}
 
-                          <div className="lb-votes-podium" style={{ marginTop: '16px', width: '100%' }}>
-                            <motion.strong
-                              key={n.votes}
-                              initial={{ color: '#fff', scale: 1.2 }}
-                              animate={{ color: isTop1 ? 'var(--gold-300)' : isTop2 ? '#e2e8f0' : '#fcd34d', scale: 1 }}
-                              style={{ fontFamily: 'Be Vietnam Pro', fontSize: isTop1 ? '2rem' : '1.6rem', fontWeight: '400', display: 'block', lineHeight: 1 }}
-                            >
-                              {n.votes.toLocaleString('vi-VN')}
-                            </motion.strong>
-                            <small style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '6px', marginBottom: '12px' }}>{t('results.votes')}</small>
-                            
-                            <div className="lb-bar" style={{ display: 'block', width: '100%', height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '99px', overflow: 'hidden' }}>
-                              <motion.div 
-                                className="lb-bar-fill" 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${pct}%` }}
-                                transition={{ duration: 0.5 }}
-                                style={{ 
-                                  height: '100%', 
-                                  background: isTop1 ? 'linear-gradient(90deg, #d4af37, #f6e6a8)' 
-                                            : isTop2 ? 'linear-gradient(90deg, #94a3b8, #e2e8f0)' 
-                                            : 'linear-gradient(90deg, #cd7f32, #fcd34d)', 
-                                  borderRadius: '99px',
-                                  boxShadow: '0 0 10px rgba(255,255,255,0.2)'
-                                }}
-                              />
+                              <div className="rank-badge" style={{
+                                position: 'absolute',
+                                bottom: '-12px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                background: isTop1 ? 'linear-gradient(135deg, #f6e6a8, #d4af37)' : isTop2 ? 'linear-gradient(135deg, #ffffff, #94a3b8)' : 'linear-gradient(135deg, #fcd34d, #cd7f32)',
+                                color: '#111',
+                                width: isTop1 ? '36px' : '30px',
+                                height: isTop1 ? '36px' : '30px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: '900',
+                                fontSize: isTop1 ? '16px' : '14px',
+                                boxShadow: '0 4px 10px rgba(0,0,0,0.5)',
+                                border: '3px solid #050d28'
+                              }}>
+                                {i + 1}
+                              </div>
                             </div>
-                          </div>
-                        </motion.div>
+
+                            {/* Bục vinh quang (Pedestal Block) */}
+                            <div className="podium-block" style={{
+                              width: '100%',
+                              height: isTop1 ? '260px' : isTop2 ? '210px' : '180px',
+                              background: isTop1 ? 'linear-gradient(180deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.02) 100%)' 
+                                        : isTop2 ? 'linear-gradient(180deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.02) 100%)' 
+                                        : 'linear-gradient(180deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.02) 100%)',
+                              borderRadius: '20px 20px 12px 12px',
+                              backdropFilter: 'blur(16px)',
+                              WebkitBackdropFilter: 'blur(16px)',
+                              borderTop: isTop1 ? '2px solid rgba(212,175,55,0.8)' : isTop2 ? '2px solid rgba(192,192,192,0.6)' : '2px solid rgba(205,127,50,0.6)',
+                              borderLeft: isTop1 ? '1px solid rgba(212,175,55,0.2)' : isTop2 ? '1px solid rgba(192,192,192,0.15)' : '1px solid rgba(205,127,50,0.15)',
+                              borderRight: isTop1 ? '1px solid rgba(212,175,55,0.2)' : isTop2 ? '1px solid rgba(192,192,192,0.15)' : '1px solid rgba(205,127,50,0.15)',
+                              borderBottom: '1px solid transparent',
+                              boxShadow: isTop1 ? '0 -10px 40px rgba(212, 175, 55, 0.15), inset 0 20px 40px rgba(212,175,55,0.1)' 
+                                      : isTop2 ? '0 -10px 30px rgba(192, 192, 192, 0.08), inset 0 20px 40px rgba(192,192,192,0.05)'
+                                      : '0 -10px 30px rgba(205, 127, 50, 0.08), inset 0 20px 40px rgba(205,127,50,0.05)',
+                              paddingTop: '64px',
+                              paddingBottom: '24px',
+                              paddingLeft: '20px',
+                              paddingRight: '20px',
+                              position: 'relative',
+                              overflow: 'hidden',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'space-between',
+                              zIndex: 1
+                            }}>
+                              {/* Số Background khổng lồ (Watermark) */}
+                              <div style={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                fontSize: isTop1 ? '14rem' : '11rem',
+                                fontWeight: '900',
+                                color: isTop1 ? 'rgba(212,175,55,0.05)' : isTop2 ? 'rgba(255,255,255,0.03)' : 'rgba(205,127,50,0.04)',
+                                pointerEvents: 'none',
+                                fontFamily: 'Playfair Display',
+                                lineHeight: 1,
+                                zIndex: 0
+                              }}>
+                                {i + 1}
+                              </div>
+                              
+                              {/* Shimmer Effect */}
+                              {isTop1 && (
+                                <div style={{ position: 'absolute', top: 0, left: '-100%', width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)', transform: 'skewX(-20deg)', animation: 'shimmer 3s infinite', zIndex: 1 }} />
+                              )}
+                              
+                              <div className="lb-name" style={{ 
+                                fontWeight: '500', 
+                                color: isTop1 ? 'var(--gold-200)' : '#fff', 
+                                fontSize: isTop1 ? '1.2rem' : '1.1rem', 
+                                fontFamily: 'Be Vietnam Pro',
+                                letterSpacing: '0.5px',
+                                lineHeight: '1.4',
+                                textAlign: 'center',
+                                zIndex: 2,
+                                textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                              }}>
+                                {n.name}
+                              </div>
+
+                              <div className="lb-votes-podium" style={{ marginTop: 'auto', width: '100%', zIndex: 2, textAlign: 'center' }}>
+                                <motion.strong
+                                  key={n.votes}
+                                  initial={{ color: '#fff', scale: 1.2 }}
+                                  animate={{ color: isTop1 ? 'var(--gold-300)' : isTop2 ? '#e2e8f0' : '#fcd34d', scale: 1 }}
+                                  style={{ fontFamily: 'Be Vietnam Pro', fontSize: isTop1 ? '2.2rem' : '1.8rem', fontWeight: '500', display: 'block', lineHeight: 1, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
+                                >
+                                  {n.votes.toLocaleString('vi-VN')}
+                                </motion.strong>
+                                <small style={{ display: 'block', fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '2px', marginTop: '6px', marginBottom: '14px' }}>{t('results.votes')}</small>
+                                
+                                <div className="lb-bar" style={{ display: 'block', width: '100%', height: '6px', background: 'rgba(0,0,0,0.2)', borderRadius: '99px', overflow: 'hidden' }}>
+                                  <motion.div 
+                                    className="lb-bar-fill" 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${pct}%` }}
+                                    transition={{ duration: 0.5 }}
+                                    style={{ 
+                                      height: '100%', 
+                                      background: isTop1 ? 'linear-gradient(90deg, #d4af37, #f6e6a8)' 
+                                                : isTop2 ? 'linear-gradient(90deg, #94a3b8, #e2e8f0)' 
+                                                : 'linear-gradient(90deg, #cd7f32, #fcd34d)', 
+                                      borderRadius: '99px',
+                                      boxShadow: '0 0 10px rgba(255,255,255,0.2)'
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </motion.div>
+                        </div>
                       );
                     })}
                   </div>

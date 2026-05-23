@@ -3,8 +3,8 @@
     "info": "Thông tin",
     "vote": "Bình chọn",
     "results": "Kết quả",
-    "news": "Tin tức",
-    "events": "Sự kiện",
+    "news": "Tin tức - Sự kiện",
+    "events": "Truyền thông",
     "sponsors": "Nhà tài trợ",
     "login": "Đăng nhập",
     "vote_now": "Bình chọn ngay"
@@ -90,8 +90,8 @@
     "votes": "lượt vote"
   },
   "news": {
-    "tag": "Tin tức · Cập nhật",
-    "title": "Tin tức",
+    "tag": "Tin tức - Sự kiện · Cập nhật",
+    "title": "Tin tức - Sự kiện",
     "highlight": "VITA Award",
     "desc": "Cập nhật mới nhất về mùa giải, sự kiện đồng hành và câu chuyện truyền cảm hứng.",
     "featured": "Nổi bật",

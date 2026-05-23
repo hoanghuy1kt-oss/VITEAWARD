@@ -132,7 +132,10 @@ export default function News() {
               }}
             >
               {paginatedNews.map((item, idx) => (
-                <motion.div 
+                <motion.a 
+                  href="https://vietnamtravel.net.vn/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="news-card" 
                   key={idx}
                   variants={{
@@ -147,7 +150,8 @@ export default function News() {
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'stretch',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    textDecoration: 'none'
                   }}
                 >
                   <div className="news-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '240px', position: 'relative', flexShrink: 0, overflow: 'hidden' }}>
@@ -161,7 +165,7 @@ export default function News() {
                       {t('news.read_more')} <span style={{ fontSize: '1.2rem', lineHeight: '1' }}>→</span>
                     </span>
                   </div>
-                </motion.div>
+                </motion.a>
               ))}
             </motion.div>
 

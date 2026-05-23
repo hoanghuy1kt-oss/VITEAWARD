@@ -10,8 +10,10 @@ import { AuthContext } from '../App';
 
 export default function Vote() {
   const { t, i18n } = useTranslation();
+  const isEn = i18n.language === 'en';
   const [currentCat, setCurrentCat] = useState('cat5');
   const [selectedSub, setSelectedSub] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   // Fake voted items state for nominees
   const [votedIds, setVotedIds] = useState(new Set());
@@ -67,6 +69,46 @@ export default function Vote() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Mobile Category Dropdown Selector */}
+            <div className="vote-mobile-selector">
+              <button 
+                className="vote-mobile-trigger" 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--gold-300)' }}>
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                    <path d="M4 22h16" />
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+                    <path d="M12 2a4 4 0 0 0-4 4v6h8V6a4 4 0 0 0-4-4z" />
+                  </svg>
+                  {isEn ? 'Category:' : 'Hạng mục:'} <strong>{isEn && activeCategory.labelEn ? activeCategory.labelEn : activeCategory.label}</strong>
+                </span>
+                <span className={`chevron ${isDropdownOpen ? 'open' : ''}`}>▼</span>
+              </button>
+              
+              {isDropdownOpen && (
+                <div className="vote-mobile-options">
+                  {VOTE_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      className={`vote-mobile-option ${currentCat === cat.id ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentCat(cat.id);
+                        setSelectedSub(null);
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      <span className="option-dot" />
+                      <span className="option-label">{isEn && cat.labelEn ? cat.labelEn : cat.label}</span>
+                      {currentCat === cat.id && <span className="option-check">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {!selectedSub ? (
@@ -128,15 +170,14 @@ export default function Vote() {
                 animate={{ opacity: 1, x: 0 }}
                 className="nominee-view-container"
               >
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '30px', gap: '15px' }}>
+                <div className="nominee-header">
                   <button 
-                    className="btn btn-ghost" 
+                    className="btn btn-ghost nominee-back-btn" 
                     onClick={() => setSelectedSub(null)}
-                    style={{ padding: '8px 16px', borderRadius: '99px', border: '1px solid rgba(255,255,255,0.2)' }}
                   >
                     ← {t('auth.back_to_cat')}
                   </button>
-                  <h3 style={{ margin: 0, fontSize: '1.3rem', color: 'var(--gold-200)' }}>{i18n.language === 'en' && selectedSub.titleEn ? selectedSub.titleEn : selectedSub.title}</h3>
+                  <h3 className="nominee-title">{i18n.language === 'en' && selectedSub.titleEn ? selectedSub.titleEn : selectedSub.title}</h3>
                 </div>
 
                 {/* DANH SÁCH ĐỀ CỬ BÊN TRONG */}

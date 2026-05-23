@@ -111,10 +111,10 @@ export default function Events() {
         <div className="container">
           <ScrollReveal>
             <div className="section-head" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '64px' }}>
-              <span className="apg-hero-script" style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{isEn ? 'Events · Updates' : 'Sự kiện · Cập nhật'}</span>
-              <h2 className="apg-sec-heading">{isEn ? 'Upcoming' : 'Sự kiện sắp tới của'} <span className="gold-text">{isEn ? 'Events' : 'VITA Award'}</span></h2>
+              <span className="apg-hero-script" style={{ fontSize: '1.5rem', marginBottom: '8px' }}>{isEn ? 'Media · Updates' : 'Truyền thông · Cập nhật'}</span>
+              <h2 className="apg-sec-heading">{isEn ? 'Media' : 'Truyền thông'} <span className="gold-text">VITA Award</span></h2>
               <div className="apg-gold-rule" style={{ margin: '20px auto 28px' }}></div>
-              <p className="apg-body-text" style={{ maxWidth: '600px', margin: '0 auto' }}>{isEn ? 'Stay updated with our latest events, roadshows, and the grand Gala night.' : 'Cập nhật những sự kiện, chuỗi roadshow và đêm Gala vinh danh hoành tráng nhất.'}</p>
+              <p className="apg-body-text" style={{ maxWidth: '600px', margin: '0 auto' }}>{isEn ? 'Stay updated with our latest media news and publications.' : 'Cập nhật những tin tức truyền thông và ấn phẩm báo chí mới nhất.'}</p>
             </div>
           </ScrollReveal>
             <motion.div 
@@ -132,7 +132,10 @@ export default function Events() {
               }}
             >
               {paginatedEvents.map((item, idx) => (
-                <motion.div 
+                <motion.a 
+                  href="https://vietnamtravel.net.vn/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="news-card" 
                   key={idx}
                   variants={{
@@ -147,7 +150,8 @@ export default function Events() {
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'stretch',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    textDecoration: 'none'
                   }}
                 >
                   <div className="news-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '240px', position: 'relative', flexShrink: 0, overflow: 'hidden' }}>
@@ -161,7 +165,7 @@ export default function Events() {
                       {isEn ? 'View Details' : 'Xem chi tiết'} <span style={{ fontSize: '1.2rem', lineHeight: '1' }}>→</span>
                     </span>
                   </div>
-                </motion.div>
+                </motion.a>
               ))}
             </motion.div>
 

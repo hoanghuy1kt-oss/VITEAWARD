@@ -171,7 +171,7 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 999;
     backdrop-filter: blur(14px);
     background: rgba(5, 13, 40, .75);
     border-bottom: 1px solid var(--line);
@@ -184,6 +184,8 @@
     padding: 14px 24px;
     max-width: 1280px;
     margin: 0 auto;
+    position: relative;
+    z-index: 101;
   }
 
   .logo {
@@ -193,6 +195,12 @@
     font-family: 'Playfair Display';
     font-weight: 800;
     font-size: 20px
+  }
+
+  .nav-logo-img {
+    height: 42px;
+    transform: scale(1.5);
+    transform-origin: left center;
   }
 
   .logo-mark {
@@ -231,10 +239,35 @@
     background: rgba(212, 175, 55, .08)
   }
 
-  .nav-actions {
+  .nav-actions,
+  .nav-actions-desktop {
     display: flex;
     gap: 10px;
     align-items: center
+  }
+
+  .hamburger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 102;
+  }
+
+  .hamburger-line {
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-nav-drawer {
+    display: none;
   }
 
   /* ============== HERO ============== */
@@ -1709,7 +1742,7 @@
 
   @media (max-width: 768px) {
     .news-card {
-      flex-direction: column;
+      flex-direction: column !important;
     }
 
     .news-img {
@@ -1717,8 +1750,12 @@
       height: 200px;
     }
 
+    .news-body {
+      padding: 20px 16px !important;
+    }
+
     .news-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-4px) !important;
     }
   }
 
@@ -2164,8 +2201,120 @@
       grid-template-columns: 1fr 1fr
     }
 
-    .nav-links {
-      display: none
+    .nav-links,
+    .nav-actions-desktop {
+      display: none !important;
+    }
+
+    .hamburger-btn {
+      display: flex !important;
+    }
+
+    .nav-logo-img {
+      transform: scale(1.15) !important;
+    }
+
+    .hamburger-btn.active .hamburger-line:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .hamburger-btn.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-btn.active .hamburger-line:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .mobile-nav-drawer {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(5, 13, 40, 0.98);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      padding: 24px;
+      gap: 20px;
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 99;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .mobile-nav-drawer.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+    }
+
+    .mobile-nav-links a {
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      display: block;
+      padding: 8px 0;
+      transition: color 0.2s;
+    }
+
+    .mobile-nav-links a.active,
+    .mobile-nav-links a:hover {
+      color: var(--gold-200);
+    }
+
+    .mobile-nav-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mobile-user-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .mobile-lang-switch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .mobile-lang-switch button {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      font-weight: normal;
+      padding: 4px 8px;
+      transition: color 0.2s;
+    }
+
+    .mobile-lang-switch button.active {
+      color: var(--gold-300);
+      font-weight: bold;
     }
 
     .timeline::before {
@@ -2938,6 +3087,141 @@
     transition: transform 0.3s;
   }
 
+    /* -------------- 1.4 Brand Values List Layout -------------- */
+  .apg-value-list {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .apg-value-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 32px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.012);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease, transform 0.4s ease;
+    cursor: default;
+    overflow: hidden;
+  }
+
+  .apg-value-item:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.025);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    transform: translateX(8px);
+  }
+
+  .apg-value-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.65;
+    mix-blend-mode: screen;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s;
+  }
+
+  .apg-value-item:hover .apg-value-bg {
+    transform: scale(1.1);
+    opacity: 0.85;
+  }
+
+  .apg-value-left {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    z-index: 1;
+    flex: 1;
+  }
+
+  .apg-value-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    min-width: 44px;
+    text-align: center;
+    letter-spacing: -0.5px;
+  }
+
+  .apg-value-divider {
+    width: 1px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.15);
+    transition: background 0.3s ease;
+  }
+
+  .apg-value-item:hover .apg-value-divider {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .apg-value-info {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .apg-value-title {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .apg-value-desc {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .apg-value-right {
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    margin-left: 20px;
+  }
+
+  .apg-value-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.01);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  }
+
+  .apg-value-icon-wrap svg {
+    filter: drop-shadow(0 0 8px currentColor);
+    transition: transform 0.4s ease;
+  }
+
+  .apg-value-item:hover .apg-value-icon-wrap {
+    transform: scale(1.08);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 15px rgba(255, 255, 255, 0.05);
+  }
+
+  .apg-value-item:hover .apg-value-icon-wrap svg {
+    transform: scale(1.05);
+  }
+
   .apg-pillar-ring {
     width: 100px;
     height: 100px;
@@ -2974,220 +3258,9 @@
     text-transform: uppercase;
   }
 
-  /* Ã¢â€â‚¬Ã¢â€â‚¬ 1.4 Brand Values Ã¢â€â‚¬Ã¢â€â‚¬ */
-  /* Ã¢â€â‚¬Ã¢â€â‚¬ 1.4 Brand Values Bento Grid Ã¢â€â‚¬Ã¢â€â‚¬ */
-  .apg-bento-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, auto);
-    gap: 20px;
-    padding: 20px 0;
-  }
+  /* Ã¢â€ â‚¬Ã¢â€ â‚¬ 1.4 Brand Values Ã¢â€ â‚¬Ã¢â€ â‚¬ */
+  /* Ã¢â€ â‚¬Ã¢â€ â‚¬ 1.4 Brand Values Bento Grid Ã¢â€ â‚¬Ã¢â€ â‚¬ */
 
-  .apg-bento-item {
-    position: relative;
-    border-radius: 12px;
-    border: 1px solid rgba(212,175,55,0.4);
-    overflow: hidden;
-    background: #0A0F1E;
-    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
-  .apg-bento-item:hover {
-    transform: translateY(-4px);
-    border-color: rgba(212,175,55,0.8);
-    box-shadow: 0 16px 40px rgba(212,175,55,0.15);
-  }
-
-  /* Span configurations for asymmetric layout */
-  .apg-bento-item-0 { grid-column: span 2; grid-row: span 2; }
-  .apg-bento-item-1 { grid-column: span 2; grid-row: span 1; }
-  .apg-bento-item-2 { grid-column: span 1; grid-row: span 1; }
-  .apg-bento-item-3 { grid-column: span 1; grid-row: span 1; }
-
-  .apg-bento-bg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .apg-bento-item-0 .apg-bento-bg {
-    background-image: radial-gradient(circle at bottom right, rgba(212,175,55,0.15) 0%, transparent 60%), url('/images/Backround.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.6;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-  }
-  .apg-bento-item-0:hover .apg-bento-bg {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-  .apg-bento-item-1 .apg-bento-bg {
-    background-image: radial-gradient(circle at bottom right, rgba(212,175,55,0.15) 0%, transparent 60%), url('/images/backround phat trien.png');
-    background-size: cover;
-    background-position: center right;
-    background-repeat: no-repeat;
-    opacity: 0.6;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-  }
-  .apg-bento-item-1:hover .apg-bento-bg {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-
-  .apg-bento-item-2 .apg-bento-bg {
-    background-image: radial-gradient(circle at bottom right, rgba(212,175,55,0.15) 0%, transparent 60%), url('/images/Backround truyen cam hung.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.6;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-  }
-  .apg-bento-item-2:hover .apg-bento-bg {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-
-  .apg-bento-item-3 .apg-bento-bg {
-    background-image: radial-gradient(circle at top left, rgba(212,175,55,0.15) 0%, transparent 70%), url('/images/backround ket noi.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.6;
-    transition: opacity 0.4s ease, transform 0.4s ease;
-  }
-  .apg-bento-item-3:hover .apg-bento-bg {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-
-  .apg-bento-content {
-    position: relative;
-    z-index: 2;
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-
-  /* Badge */
-  .apg-bento-badge {
-    position: absolute;
-    top: 32px;
-    left: 32px;
-    border: 1px solid rgba(212,175,55,0.5);
-    border-radius: 6px;
-    padding: 6px 16px;
-    color: var(--gold-400);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    background: rgba(10,15,30,0.5);
-  }
-
-  /* Icons */
-  .apg-bento-icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-  }
-
-  .apg-bento-icon img {
-    width: 64px;
-    height: auto;
-    filter: drop-shadow(0 0 12px rgba(212,175,55,0.3));
-    transition: transform 0.4s ease, filter 0.4s ease;
-  }
-
-  .apg-bento-item:hover .apg-bento-icon img {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 20px rgba(212,175,55,0.6));
-  }
-
-  .apg-bento-item-0 .apg-bento-icon img { width: 100px; margin-top: 60px; margin-bottom: 20px; }
-
-  .apg-bento-text {
-    margin-top: 24px;
-  }
-
-  .apg-bento-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--gold-300);
-    margin: 0;
-    line-height: 1.3;
-  }
-  
-  .apg-bento-item-0 .apg-bento-title { font-size: 48px; margin-top: 20px; color: var(--gold-400); }
-
-  .apg-bento-line {
-    width: 40px;
-    height: 1px;
-    background: var(--gold-400);
-    margin: 16px 0;
-  }
-  .apg-bento-item-2 .apg-bento-line,
-  .apg-bento-item-3 .apg-bento-line { margin: 16px auto; } /* center align for bottom cards */
-
-  .apg-bento-desc {
-    font-size: 14px;
-    color: rgba(255,255,255,0.7);
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  .apg-bento-item-0 .apg-bento-desc { font-size: 16px; margin-top: 24px; max-width: 90%; }
-
-  /* Layout Overrides for specific items */
-  /* Item 0 (Left): Left aligned */
-  .apg-bento-item-0 .apg-bento-content {
-    justify-content: flex-end;
-    align-items: flex-start;
-  }
-
-  /* Item 1 (Top Right): Flex Row */
-  .apg-bento-item-1 .apg-bento-content {
-    flex-direction: row;
-    align-items: center;
-    gap: 40px;
-    padding: 40px;
-  }
-  .apg-bento-item-1 .apg-bento-icon img { width: 80px; }
-  .apg-bento-item-1 .apg-bento-text { margin-top: 0; flex-grow: 1; text-align: left; }
-  .apg-bento-item-1 .apg-bento-title { font-size: 28px; }
-
-  /* Item 2 & 3 (Bottom Right): Centered */
-  .apg-bento-item-2 .apg-bento-content,
-  .apg-bento-item-3 .apg-bento-content {
-    align-items: center;
-    text-align: center;
-    padding: 32px 24px;
-  }
-  .apg-bento-item-2 .apg-bento-icon img,
-  .apg-bento-item-3 .apg-bento-icon img { width: 64px; margin-bottom: 8px; }
-
-  .apg-bento-glow {
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    box-shadow: inset 0 0 0 1px transparent;
-    transition: box-shadow 0.4s ease;
-    pointer-events: none;
-    z-index: 3;
-  }
-
-  .apg-bento-item:hover .apg-bento-glow {
-    box-shadow: inset 0 0 30px rgba(212,175,55,0.1);
-  }
-
-  /* Ã¢â€â‚¬Ã¢â€â‚¬ 1.5 Categories Ã¢â€â‚¬Ã¢â€â‚¬ */
   .apg-cats-section {
     background: linear-gradient(180deg, transparent 0%, rgba(212,175,55,0.02) 40%, transparent 100%);
   }
@@ -3241,10 +3314,10 @@
   }
 
   .apg-cat-name {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 600;
     color: #fff;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
   }
 
   .apg-cat-right {
@@ -3267,7 +3340,7 @@
     font-size: 26px;
   }
 
-  /* Ã¢â€â‚¬Ã¢â€â‚¬ Bottom CTA Ã¢â€â‚¬Ã¢â€â‚¬ */
+  /* Ã¢â€ â‚¬Ã¢â€ â‚¬ Bottom CTA Ã¢â€ â‚¬Ã¢â€ â‚¬ */
   .apg-bottom-cta {
     display: flex;
     flex-direction: column;
@@ -3300,15 +3373,52 @@
     .apg-diag-panel { border-radius: 16px; }
     .apg-intro-grid { grid-template-columns: 1fr; gap: 48px; }
     .apg-vm-grid { grid-template-columns: 1fr; }
-    .apg-bento-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
-    .apg-bento-item { grid-column: span 1 !important; grid-row: span 1 !important; min-height: 220px; }
-    .apg-bento-item-1 .apg-bento-content {
-      flex-direction: column;
-      text-align: center;
-      gap: 16px;
-      padding: 32px 24px;
+            .apg-value-item {
+      padding: 16px 20px;
+      gap: 12px;
     }
-    .apg-bento-item-1 .apg-bento-text { text-align: center; }
+    .apg-value-left {
+      gap: 16px;
+    }
+    .apg-value-num {
+      font-size: 26px;
+      min-width: 30px;
+    }
+    .apg-value-divider {
+      height: 36px;
+    }
+    .apg-value-title {
+      font-size: 18px;
+    }
+    .apg-value-desc {
+      font-size: 13px;
+    }
+    .apg-value-icon-wrap {
+      width: 42px;
+      height: 42px;
+    }
+    .apg-value-icon-wrap svg {
+      width: 22px;
+      height: 22px;
+    }
+    @media (max-width: 640px) {
+      .apg-value-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+      }
+      .apg-value-left {
+        width: 100%;
+      }
+      .apg-value-divider {
+        display: none;
+      }
+      .apg-value-right {
+        align-self: flex-end;
+        margin-left: 0;
+      }
+    }
     .apg-pillars-grid { grid-template-columns: repeat(2, 1fr); }
     .apg-bigidea-layout { flex-direction: column; gap: 36px; }
     .apg-bigidea-text { text-align: center; }
@@ -3847,6 +3957,149 @@
   box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 
+/* Vote Mobile Category Selector */
+.vote-mobile-selector {
+  display: none;
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto 30px auto;
+  z-index: 10;
+}
+
+.vote-mobile-trigger {
+  width: 100%;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 100px;
+  color: #fff;
+  font-size: 15px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.vote-mobile-trigger:active {
+  transform: scale(0.98);
+  border-color: rgba(212, 175, 55, 0.6);
+}
+
+.vote-mobile-trigger strong {
+  color: var(--gold-200);
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.vote-mobile-trigger .chevron {
+  font-size: 10px;
+  color: var(--gold-300);
+  transition: transform 0.3s ease;
+}
+
+.vote-mobile-trigger .chevron.open {
+  transform: rotate(180deg);
+}
+
+.vote-mobile-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(5, 13, 40, 0.98);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 18px;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 15;
+}
+
+.vote-mobile-option {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vote-mobile-option:active {
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.vote-mobile-option.active {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold-200);
+  font-weight: 700;
+}
+
+.vote-mobile-option .option-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.3);
+  margin-right: 12px;
+  transition: all 0.3s ease;
+}
+
+.vote-mobile-option.active .option-dot {
+  background: var(--gold-300);
+  box-shadow: 0 0 8px var(--gold-300);
+}
+
+.vote-mobile-option .option-label {
+  flex: 1;
+}
+
+.vote-mobile-option .option-check {
+  color: var(--gold-200);
+  font-weight: bold;
+}
+
+.nominee-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 20px;
+}
+
+.nominee-back-btn {
+  padding: 8px 18px !important;
+  border-radius: 99px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+.nominee-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold-200);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  line-height: 1.4;
+}
+
 /* =========================================================================
    CHECKLIST VOTE EFFECT
    ========================================================================= */
@@ -3982,4 +4235,122 @@
   .podium-wrapper.top1 { order: 1 !important; }
   .podium-wrapper.top2 { order: 2 !important; }
   .podium-wrapper.top3 { order: 3 !important; }
+}
+
+@media (max-width: 768px) {
+  .apg-hero-right {
+    display: none !important;
+  }
+  
+  /* Override inline min-height on main wrapper */
+  main {
+    min-height: auto !important;
+  }
+  
+  /* Prevent excessive empty space before footer on mobile */
+  .apg-hero {
+    min-height: auto !important;
+    padding-top: 80px !important;
+  }
+  .apg-hero-inner {
+    min-height: auto !important;
+    padding-bottom: 30px !important;
+  }
+  
+  #winners, 
+  #sponsors, 
+  #vote, 
+  #news, 
+  #event-updates {
+    min-height: auto !important;
+    padding-top: 110px !important;
+    padding-bottom: 40px !important;
+  }
+
+  /* About Page Mobile Optimizations */
+  .apg-section {
+    padding: 60px 0 !important;
+  }
+  
+  .apg-block-head {
+    margin-bottom: 32px !important;
+  }
+  
+  .apg-gold-rule {
+    margin-top: 12px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .apg-cat-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    padding: 20px !important;
+    border-radius: 24px !important;
+  }
+
+  .apg-cat-left {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  .apg-cat-divider {
+    display: none !important;
+  }
+
+  .apg-cat-num {
+    font-size: 24px !important;
+    min-width: auto !important;
+  }
+
+  .apg-cat-name {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+  }
+
+  .apg-cat-right {
+    align-self: flex-end !important;
+    margin-top: -8px !important;
+  }
+
+  .apg-cat-icon-wrap {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  
+  .apg-cat-icon-wrap svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+
+
+  .nominee-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .nominee-title {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
+  }
+
+  .vote-toolbar {
+    display: none !important;
+  }
+
+  .vote-mobile-selector {
+    display: block !important;
+  }
+
+  footer {
+    margin-top: 30px !important;
+    padding: 40px 0 20px !important;
+  }
 }

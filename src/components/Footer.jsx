@@ -18,11 +18,11 @@ export default function Footer() {
           </div>
           <div className="foot-col">
             <h5>{t('footer.links')}</h5>
-            <Link to="/">{t('nav.info')}</Link>
+            <Link to="/about">{t('nav.info')}</Link>
             <Link to="/vote">{t('nav.vote')}</Link>
-            <Link to="/events">{t('nav.events')}</Link>
-            <Link to="/results">{t('nav.results')}</Link>
             <Link to="/news">{t('nav.news')}</Link>
+            <Link to="/results">{t('nav.results')}</Link>
+            <Link to="/events">{t('nav.events')}</Link>
           </div>
           <div className="foot-col">
             <h5>{t('footer.support')}</h5>

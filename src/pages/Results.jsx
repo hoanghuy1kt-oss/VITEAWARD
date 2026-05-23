@@ -18,13 +18,38 @@ const generateDummyLeaderboard = (subId, subTitle, isEn) => {
     'https://picsum.photos/seed/balloon9/600/400',
     'https://picsum.photos/seed/seascape2/600/400',
   ];
-  return Array.from({ length: 10 }).map((_, i) => ({
-    id: `${subId}-n${i + 1}`,
-    name: `Tên Đề Cử Số ${(i + 1).toString().padStart(2, '0')}`,
-    desc: subTitle,
-    image: images[i % images.length],
-    votes: 15000 - i * 1200 + Math.floor(Math.random() * 500) // Tạo số vote ảo có xu hướng giảm dần theo rank
-  }));
+  const longNamesVi = [
+    'Khu du lịch sinh thái Quốc tế Tuần Châu Hà Nội - Điểm đến hàng đầu Việt Nam',
+    'Khách sạn Mường Thanh Luxury Hạ Long Center Quảng Ninh',
+    'Hãng hàng không Quốc gia Vietnam Airlines - Trải nghiệm đẳng cấp quốc tế',
+    'Tổ hợp Vui chơi Giải trí Sun World Ba Na Hills Đà Nẵng',
+    'Hãng xe du lịch vận chuyển hành khách cao cấp Hoàng Long',
+  ];
+  const longNamesEn = [
+    'Tuan Chau Hanoi International Eco-tourism Area - Vietnam Leading Destination',
+    'Muong Thanh Luxury Ha Long Center Hotel Quang Ninh Province',
+    'Vietnam Airlines - Premium National Carrier Experience',
+    'Sun World Ba Na Hills Amusement & Entertainment Complex Danang',
+    'Hoang Long Premium Tourist Passenger Transportation Service',
+  ];
+  return Array.from({ length: 10 }).map((_, i) => {
+    let name = isEn 
+      ? `Nominee Name ${(i + 1).toString().padStart(2, '0')}`
+      : `Tên Đề Cử Số ${(i + 1).toString().padStart(2, '0')}`;
+    
+    // Inject some long names to test responsiveness
+    if (i < 5) {
+      name = isEn ? longNamesEn[i] : longNamesVi[i];
+    }
+
+    return {
+      id: `${subId}-n${i + 1}`,
+      name: name,
+      desc: subTitle,
+      image: images[i % images.length],
+      votes: 15000 - i * 1200 + Math.floor(Math.random() * 500) // Tạo số vote ảo có xu hướng giảm dần theo rank
+    };
+  });
 };
 
 
@@ -56,6 +81,7 @@ export default function Results() {
 
   // Dropdown state & logic
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileCatDropdownOpen, setIsMobileCatDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   
   useEffect(() => {
@@ -243,31 +269,143 @@ export default function Results() {
           }
           .lb-subtitle img { width: 32px; height: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); margin-left: -6px; }
           
-          /* ── List rows 4–10 ── */
-          .list-rows { display: flex; flex-direction: column; gap: 12px; }
+          /* ── List rows 1–10 ── */
+          .list-rows { display: flex; flex-direction: column; gap: 14px; }
           
           .list-row {
-            display: flex; align-items: center; gap: 20px;
-            background: rgba(8,15,40,.55);
-            border: 1px solid rgba(255,255,255,.05);
-            border-radius: 16px; padding: 16px 24px;
-            transition: background .2s, border-color .2s;
+            display: flex; align-items: center; gap: 24px;
+            background: rgba(8,16,40,0.45);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 20px; padding: 18px 28px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
           }
-          .list-row:hover { background: rgba(212,175,55,.07); border-color: rgba(212,175,55,.2); }
+          .list-row:hover {
+            transform: translateY(-4px);
+            background: rgba(12, 24, 60, 0.6);
+            border-color: rgba(212, 175, 55, 0.35);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.05);
+          }
           
-          .list-rank { font-size: 1.8rem; font-weight: 700; color: var(--gold-400); width: 40px; text-align: center; flex-shrink: 0; }
+          .list-row-1 {
+            background: linear-gradient(90deg, rgba(255, 185, 0, 0.08) 0%, rgba(8, 16, 40, 0.45) 100%);
+            border: 1px solid rgba(255, 185, 0, 0.28);
+          }
+          .list-row-1:hover {
+            border-color: rgba(255, 185, 0, 0.5);
+            box-shadow: 0 16px 40px rgba(255, 185, 0, 0.12), 0 0 30px rgba(255, 185, 0, 0.05);
+          }
           
-          .list-thumb { width: 90px; height: 60px; border-radius: 10px; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,.1); }
-          .list-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+          .list-row-2 {
+            background: linear-gradient(90deg, rgba(203, 213, 225, 0.08) 0%, rgba(8, 16, 40, 0.45) 100%);
+            border: 1px solid rgba(203, 213, 225, 0.22);
+          }
+          .list-row-2:hover {
+            border-color: rgba(203, 213, 225, 0.45);
+            box-shadow: 0 16px 40px rgba(203, 213, 225, 0.1), 0 0 30px rgba(203, 213, 225, 0.03);
+          }
+          
+          .list-row-3 {
+            background: linear-gradient(90deg, rgba(246, 199, 104, 0.07) 0%, rgba(8, 16, 40, 0.45) 100%);
+            border: 1px solid rgba(246, 199, 104, 0.2);
+          }
+          .list-row-3:hover {
+            border-color: rgba(246, 199, 104, 0.4);
+            box-shadow: 0 16px 40px rgba(246, 199, 104, 0.08), 0 0 30px rgba(246, 199, 104, 0.03);
+          }
+          
+          .list-rank { width: 56px; height: 56px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+          
+          .rank-coin {
+            width: 46px; height: 46px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 850; font-size: 1.3rem; line-height: 1;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), 0 4px 10px rgba(0,0,0,0.3);
+          }
+          
+          .coin-gold {
+            background: linear-gradient(135deg, #ffe694 0%, #c6931f 50%, #875c00 100%);
+            border: 2px solid #ffd700;
+            color: #0b1122 !important;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5), 0 6px 15px rgba(255, 185, 0, 0.35);
+          }
+          
+          .coin-silver {
+            background: linear-gradient(135deg, #ffffff 0%, #a6b5c7 50%, #52637a 100%);
+            border: 2px solid #cbd5e1;
+            color: #0b1122 !important;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6), 0 6px 15px rgba(203, 213, 225, 0.25);
+          }
+          
+          .coin-bronze {
+            background: linear-gradient(135deg, #fcd34d 0%, #b4783a 50%, #61370b 100%);
+            border: 2px solid #f6c768;
+            color: #0b1122 !important;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 6px 15px rgba(246, 199, 104, 0.2);
+          }
+          
+          .coin-standard {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.8) !important;
+            width: 40px; height: 40px; font-size: 1.1rem;
+            box-shadow: none;
+          }
+          
+          .list-thumb { 
+            width: 120px; height: 80px; border-radius: 14px; overflow: hidden; flex-shrink: 0; 
+            border: 2px solid rgba(255,255,255,.06); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+          }
+          .list-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+          .list-row:hover .list-thumb { border-color: rgba(212, 175, 55, 0.4); transform: scale(1.03); }
+          .list-row:hover .list-thumb img { transform: scale(1.08); }
           
           .list-info { flex: 1; min-width: 0; }
-          .list-name { font-weight: 600; font-size: 1.15rem; color: #fff; line-height: 1.4; }
-          .list-bar-wrap { margin-top: 10px; height: 5px; background: rgba(255,255,255,.08); border-radius: 999px; overflow: hidden; }
-          .list-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff); box-shadow: 0 0 8px var(--gold-200); transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+          .list-name { font-weight: 700; font-size: 1.2rem; color: #fff; line-height: 1.4; letter-spacing: 0.3px; }
+          .list-bar-wrap { margin-top: 10px; height: 6px; background: rgba(0,0,0,.45); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,0.03); }
+          .list-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff); box-shadow: 0 0 8px rgba(212,175,55,0.4); transition: width 1.2s cubic-bezier(.4,0,.2,1); }
           
           .list-votes { text-align: right; flex-shrink: 0; }
-          .list-votes strong { font-size: 1.4rem; font-weight: 700; color: #fff; display: block; }
-          .list-votes small { font-size: .75rem; color: rgba(255,255,255,.4); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; display: block; }
+          .list-votes strong { font-size: 1.45rem; font-weight: 800; color: #fff; display: block; letter-spacing: 0.5px; }
+          .list-votes small { font-size: .75rem; color: rgba(255,255,255,.45); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; display: block; }
+          
+          @keyframes floatCrown {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+          }
+          
+          .results-sponsors-strip {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px dashed rgba(212, 175, 55, 0.22) !important;
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+            box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.02);
+            transition: all 0.4s ease;
+          }
+          .results-sponsors-strip:hover {
+            border-color: rgba(212, 175, 55, 0.4) !important;
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: inset 0 0 40px rgba(212, 175, 55, 0.04), 0 12px 48px rgba(0, 0, 0, 0.45);
+          }
+          
+          .sponsor-logo-item {
+            opacity: 0.55;
+            filter: grayscale(1) brightness(1.6);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+          .sponsor-logo-item:hover {
+            opacity: 0.95;
+            filter: grayscale(0) brightness(1);
+            transform: scale(1.05);
+          }
 
           /* ── Premium Dropdown Menu (Integrated into Tagline) ── */
           .custom-select-wrapper {
@@ -332,6 +470,89 @@ export default function Results() {
           .custom-select-item.active::before {
             content: '✓'; color: var(--gold-400); font-weight: bold; margin-left: -4px;
           }
+          
+          @media (max-width: 640px) {
+            .custom-select-btn::before, .custom-select-btn::after {
+              display: none !important;
+            }
+            .custom-select-wrapper {
+              flex-direction: column;
+              align-items: center;
+              gap: 8px;
+            }
+            .live-tag {
+              position: static;
+              transform: none;
+              margin: 8px auto 0;
+            }
+            .list-row {
+              padding: 14px 16px;
+              gap: 6px 12px;
+              border-radius: 16px;
+              display: grid;
+              grid-template-columns: auto auto 1fr;
+              grid-template-rows: auto auto;
+              align-items: center;
+            }
+            .list-rank {
+              width: 42px;
+              height: 42px;
+              grid-row: 1 / span 2;
+            }
+            .rank-coin {
+              width: 34px;
+              height: 34px;
+              font-size: 1.1rem;
+            }
+            .coin-standard {
+              width: 30px;
+              height: 30px;
+              font-size: 0.9rem;
+            }
+            .list-thumb {
+              width: 75px;
+              height: 50px;
+              border-radius: 8px;
+              grid-row: 1 / span 2;
+            }
+            .list-info {
+              grid-row: 1;
+              grid-column: 3;
+              align-self: end;
+            }
+            .list-name {
+              font-size: 0.92rem;
+              word-break: break-word;
+              overflow-wrap: anywhere;
+            }
+            .list-votes {
+              grid-row: 2;
+              grid-column: 3;
+              text-align: left;
+              display: flex;
+              align-items: baseline;
+              gap: 6px;
+              align-self: start;
+            }
+            .list-votes strong {
+              font-size: 1.05rem;
+              display: inline-block;
+            }
+            .list-votes small {
+              font-size: 0.65rem;
+              letter-spacing: 1px;
+              display: inline-block;
+              margin-top: 0;
+            }
+            .lb-title {
+              font-size: 1.6rem !important;
+              line-height: 1.4;
+            }
+            .lb-subtitle {
+              padding: 8px 20px;
+              font-size: 0.85rem;
+            }
+          }
         `}</style>
 
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -350,6 +571,45 @@ export default function Results() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Mobile Category Dropdown Selector */}
+            <div className="vote-mobile-selector">
+              <button 
+                className="vote-mobile-trigger" 
+                onClick={() => setIsMobileCatDropdownOpen(!isMobileCatDropdownOpen)}
+              >
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--gold-300)' }}>
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                    <path d="M4 22h16" />
+                    <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
+                    <path d="M12 2a4 4 0 0 0-4 4v6h8V6a4 4 0 0 0-4-4z" />
+                  </svg>
+                  {isEn ? 'Category:' : 'Hạng mục:'} <strong>{isEn && activeCategory.labelEn ? activeCategory.labelEn : activeCategory.label}</strong>
+                </span>
+                <span className={`chevron ${isMobileCatDropdownOpen ? 'open' : ''}`}>▼</span>
+              </button>
+              
+              {isMobileCatDropdownOpen && (
+                <div className="vote-mobile-options">
+                  {VOTE_CATEGORIES.map(cat => (
+                    <button
+                      key={cat.id}
+                      className={`vote-mobile-option ${currentCat === cat.id ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentCat(cat.id);
+                        setIsMobileCatDropdownOpen(false);
+                      }}
+                    >
+                      <span className="option-dot" />
+                      <span className="option-label">{isEn && cat.labelEn ? cat.labelEn : cat.label}</span>
+                      {currentCat === cat.id && <span className="option-check">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* TẦNG 2 & 3: BẢNG XẾP HẠNG (LEADERBOARD) - TÍCH HỢP CHỌN HẠNG MỤC */}
@@ -409,46 +669,34 @@ export default function Results() {
               <div style={{ position: 'relative', zIndex: 1, minHeight: '400px' }}>
                 <AnimatePresence>
                   
-                  {/* PODIUM cho Top 3 */}
-                  <div className="podium-buc">
-                    <img className="buc-img" src="/extracted_assets/Buc.png" alt="" />
-                    <img className="buc-crown" src="/extracted_assets/top1_crown.png" alt="" />
-                    
-                    {CARD_CFG.map(cfg => {
-                      const e = top[cfg.entry];
-                      if (!e) return null;
-                      return (
-                        <div key={e.id} className="buc-card" style={{ left: cfg.left, top: cfg.top, width: cfg.cardW }}>
-                          <div className="buc-ring-wrap" style={{ width: cfg.ringW, margin: '0 auto' }}>
-                            <div className="buc-photo"><img src={e.image} alt={e.name} loading="lazy" /></div>
-                            <img className="buc-ring" src={RING_IMGS[cfg.entry]} alt="" style={{ filter: RING_FILTER[cfg.entry] }} />
-                            <div className={`buc-rank buc-rank-${cfg.type}`}>{cfg.rank}</div>
-                          </div>
-                          <div className="buc-sub">{isEn ? 'Outstanding Nominee' : 'Đề cử xuất sắc'}</div>
-                          <div className={`buc-name buc-name-${cfg.type}`} title={e.name}>{e.name}</div>
-                          <motion.div 
-                            className={`buc-votes buc-votes-${cfg.type}`}
-                            key={e.votes}
-                            initial={{ scale: 1.3 }}
-                            animate={{ scale: 1 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                          >
-                            {e.votes.toLocaleString('vi-VN')}
-                          </motion.div>
-                          <div className="buc-vote-lbl">{t('results.votes') || 'Lượt Vote'}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="gold-divider"></div>
-
-                  {/* DANH SÁCH cho Top 4-10 */}
+                  {/* DANH SÁCH Top 10 */}
                   <div className="list-rows">
-                    {top.slice(3).map((e, idx) => {
-                      const i = idx + 3; // true rank index (3 to 9)
+                    {top.map((e, i) => {
                       const pct = Math.max(8, (e.votes / max) * 100);
                       
+                      // Row and coin color distinctions
+                      let rowStyleClass = '';
+                      let coinStyleClass = 'coin-standard';
+                      let barGradient = 'linear-gradient(90deg, var(--gold-400), var(--gold-200), #fff)';
+                      let barGlow = '0 0 8px rgba(212,175,55,0.4)';
+                      
+                      if (i === 0) {
+                        rowStyleClass = 'list-row-1';
+                        coinStyleClass = 'coin-gold';
+                        barGradient = 'linear-gradient(90deg, #ffb900, #ff8800, #fff)';
+                        barGlow = '0 0 12px rgba(255,185,0,0.5)';
+                      } else if (i === 1) {
+                        rowStyleClass = 'list-row-2';
+                        coinStyleClass = 'coin-silver';
+                        barGradient = 'linear-gradient(90deg, #94a3b8, #cbd5e1, #fff)';
+                        barGlow = '0 0 12px rgba(203,213,225,0.4)';
+                      } else if (i === 2) {
+                        rowStyleClass = 'list-row-3';
+                        coinStyleClass = 'coin-bronze';
+                        barGradient = 'linear-gradient(90deg, #b4783a, #f6c768, #fff)';
+                        barGlow = '0 0 12px rgba(246,199,104,0.4)';
+                      }
+
                       return (
                         <motion.div 
                           layoutId={`card-${e.id}`}
@@ -456,19 +704,34 @@ export default function Results() {
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0 }}
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          className="list-row" 
+                          className={`list-row ${rowStyleClass}`}
                           key={e.id}
                         >
-                          <div className="list-rank">{i + 1}</div>
+                          <div className="list-rank">
+                            {i === 0 && (
+                              <div style={{ position: 'absolute', top: '-13px', left: '50%', transform: 'translateX(-50%)', fontSize: '1.25rem', filter: 'drop-shadow(0 2px 4px rgba(255,185,0,0.5))', animation: 'floatCrown 2.5s ease-in-out infinite' }}>
+                                👑
+                              </div>
+                            )}
+                            <div className={`rank-coin ${coinStyleClass}`}>
+                              {i + 1}
+                            </div>
+                          </div>
                           
                           <div className="list-thumb">
                             <img src={e.image} alt={e.name} loading="lazy" />
                           </div>
                           
                           <div className="list-info">
-                            <div className="list-name">{e.name}</div>
+                            <div className="list-name" style={{ color: i === 0 ? 'var(--gold-200)' : i === 1 ? '#cbd5e1' : i === 2 ? '#f6c768' : '#fff' }}>
+                              {e.name}
+                            </div>
                             <div className="list-bar-wrap">
-                              <div className="list-bar" style={{ width: `${pct}%` }}></div>
+                              <div className="list-bar" style={{ 
+                                width: `${pct}%`,
+                                background: barGradient,
+                                boxShadow: barGlow
+                              }}></div>
                             </div>
                           </div>
 
@@ -477,6 +740,7 @@ export default function Results() {
                               key={e.votes}
                               initial={{ scale: 1.3 }}
                               animate={{ scale: 1 }}
+                              style={{ color: i === 0 ? 'var(--gold-200)' : i === 1 ? '#cbd5e1' : i === 2 ? '#f6c768' : '#fff' }}
                             >
                               {e.votes.toLocaleString('vi-VN')}
                             </motion.strong>
@@ -489,6 +753,8 @@ export default function Results() {
 
                 </AnimatePresence>
               </div>
+
+
             </div>
           </ScrollReveal>
         </div>

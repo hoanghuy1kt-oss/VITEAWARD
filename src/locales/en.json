@@ -3,8 +3,8 @@
     "info": "About",
     "vote": "Vote",
     "results": "Results",
-    "news": "News",
-    "events": "Events",
+    "news": "News & Events",
+    "events": "Media",
     "sponsors": "Sponsors",
     "login": "Login",
     "vote_now": "Vote Now"
@@ -90,9 +90,9 @@
     "votes": "votes"
   },
   "news": {
-    "tag": "News · Updates",
-    "title": "VITA Award",
-    "highlight": "News",
+    "tag": "News & Events · Updates",
+    "title": "News & Events",
+    "highlight": "VITA Award",
     "desc": "Latest updates on the season, accompanying events, and inspiring stories.",
     "featured": "Featured",
     "read_more": "Read more →",

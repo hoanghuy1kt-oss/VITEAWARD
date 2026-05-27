@@ -1,0 +1,57 @@
+import { readFileSync } from 'fs';
+import { initializeApp } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+
+// Read .env from Vite project directory
+const envPath = './.env';
+const envContent = readFileSync(envPath, 'utf-8');
+const env = {};
+envContent.split('\n').forEach(line => {
+  const parts = line.split('=');
+  if (parts.length >= 2) {
+    const key = parts[0].trim();
+    const val = parts.slice(1).join('=').trim();
+    env[key] = val;
+  }
+});
+
+const firebaseConfig = {
+  apiKey: env.VITE_FIREBASE_API_KEY,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.VITE_FIREBASE_APP_ID
+};
+
+console.log("Initializing Firebase with project ID:", firebaseConfig.projectId);
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const email = 'admin@vita.vn';
+const password = 'admin@123';
+
+try {
+  console.log(`Attempting to create admin account: ${email}`);
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const uid = userCredential.user.uid;
+  console.log(`User created successfully in Auth. UID: ${uid}`);
+
+  console.log(`Writing admin role to users collection...`);
+  await setDoc(doc(db, 'users', uid), {
+    uid: uid,
+    name: 'Admin Hoang Huy',
+    email: email,
+    role: 'admin',
+    createdAt: new Date().toISOString()
+  });
+
+  console.log(`Admin account set up successfully!`);
+  process.exit(0);
+} catch (error) {
+  console.error("Error setting up admin account:", error.message || error);
+  process.exit(1);
+}

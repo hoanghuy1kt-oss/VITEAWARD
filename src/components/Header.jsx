@@ -3,13 +3,30 @@ import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../App';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../context/ToastContext';
+import { auth, isConfigured } from '../utils/firebase';
+import { signOut } from 'firebase/auth';
 
 export default function Header({ onOpenModal }) {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const isEn = i18n.language === 'en';
-  const { isLoggedIn, setIsLoggedIn, user, setIsChangePasswordOpen } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, user, setUser, setIsChangePasswordOpen } = useContext(AuthContext);
   const { addToast } = useToast();
+
+  const handleLogout = async () => {
+    if (isConfigured) {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error("Logout error:", err);
+      }
+    }
+    setIsLoggedIn(false);
+    setUser(null);
+    setIsDropdownOpen(false);
+    setIsMobileMenuOpen(false);
+    addToast(t('auth.toast_logout') || 'Đăng xuất thành công!', 'info');
+  };
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -76,10 +93,10 @@ export default function Header({ onOpenModal }) {
               style={{ background: 'none', border: 'none', color: i18n.language === 'en' ? 'var(--gold-300)' : '#fff', cursor: 'pointer', fontWeight: i18n.language === 'en' ? 'bold' : 'normal', padding: 0 }}
             >EN</button>
           </div>
-          {isLoggedIn ? (
+          {isLoggedIn && user ? (
             <div className="user-profile-wrapper" ref={dropdownRef} style={{ position: 'relative' }}>
               <div className="user-profile" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '100px', border: '1px solid rgba(212,175,55,0.3)', transition: '0.3s' }} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                <span style={{ color: '#fff', fontWeight: '600', fontSize: '0.9rem' }}>{user.name}</span>
+                <span style={{ color: '#fff', fontWeight: '600', fontSize: '0.9rem' }}>{user?.name || 'Voter'}</span>
                 <span style={{ color: 'var(--gold-200)', fontSize: '0.7rem', marginLeft: '4px' }}>▼</span>
               </div>
               
@@ -97,11 +114,25 @@ export default function Header({ onOpenModal }) {
                   backdropFilter: 'blur(10px)',
                   zIndex: 100
                 }}>
+                  {user && user.role === 'admin' && (
+                    <>
+                      <Link 
+                        to="/admin" 
+                        style={{ padding: '10px 16px', color: 'var(--gold-200)', textDecoration: 'none', fontSize: '0.9rem', transition: '0.2s', display: 'flex', alignItems: 'center', gap: '8px' }} 
+                        onMouseEnter={(e) => e.target.style.background = 'rgba(212,175,55,0.1)'} 
+                        onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <span>🛠️</span> {isEn ? 'Admin Panel' : 'Trang quản trị'}
+                      </Link>
+                      <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '4px 0' }}></div>
+                    </>
+                  )}
                   <div style={{ padding: '10px 16px', color: '#fff', cursor: 'pointer', fontSize: '0.9rem', transition: '0.2s', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseEnter={(e) => e.target.style.background = 'rgba(212,175,55,0.1)'} onMouseLeave={(e) => e.target.style.background = 'transparent'} onClick={() => { setIsChangePasswordOpen(true); setIsDropdownOpen(false); }}>
                     <span>🔒</span> {t('auth.change_pass')}
                   </div>
                   <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '4px 0' }}></div>
-                  <div style={{ padding: '10px 16px', color: '#ff4d4f', cursor: 'pointer', fontSize: '0.9rem', transition: '0.2s', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseEnter={(e) => e.target.style.background = 'rgba(255,77,79,0.1)'} onMouseLeave={(e) => e.target.style.background = 'transparent'} onClick={() => { setIsLoggedIn(false); setIsDropdownOpen(false); addToast(t('auth.toast_logout'), 'info'); }}>
+                  <div style={{ padding: '10px 16px', color: '#ff4d4f', cursor: 'pointer', fontSize: '0.9rem', transition: '0.2s', display: 'flex', alignItems: 'center', gap: '8px' }} onMouseEnter={(e) => e.target.style.background = 'rgba(255,77,79,0.1)'} onMouseLeave={(e) => e.target.style.background = 'transparent'} onClick={handleLogout}>
                     <span>🚪</span> {t('auth.logout')}
                   </div>
                 </div>
@@ -139,16 +170,33 @@ export default function Header({ onOpenModal }) {
           ))}
         </ul>
         <div className="mobile-nav-actions">
-          {isLoggedIn ? (
+          {isLoggedIn && user ? (
             <div className="mobile-user-box">
               <div style={{ color: 'var(--gold-200)', fontWeight: 'bold', fontSize: '1rem', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--gold-200)' }}>
                   <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
-                {user.name}
+                {user?.name || 'Voter'}
               </div>
               <div style={{ display: 'flex', gap: '10px', flexDirection: 'column', width: '100%' }}>
+                {user && user.role === 'admin' && (
+                  <Link 
+                    to="/admin" 
+                    className="btn btn-primary" 
+                    style={{ width: '100%', fontSize: '0.9rem', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                      <line x1="9" y1="3" x2="9" y2="21" />
+                      <line x1="15" y1="3" x2="15" y2="21" />
+                      <line x1="3" y1="9" x2="21" y2="9" />
+                      <line x1="3" y1="15" x2="21" y2="15" />
+                    </svg>
+                    {isEn ? 'Admin Panel' : 'Trang quản trị'}
+                  </Link>
+                )}
                 <button 
                   className="btn btn-ghost" 
                   style={{ width: '100%', fontSize: '0.9rem', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
@@ -163,7 +211,7 @@ export default function Header({ onOpenModal }) {
                 <button 
                   className="btn" 
                   style={{ width: '100%', fontSize: '0.9rem', padding: '10px', color: '#ff4d4f', borderColor: '#ff4d4f', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                  onClick={() => { setIsLoggedIn(false); setIsMobileMenuOpen(false); addToast(t('auth.toast_logout'), 'info'); }}
+                  onClick={handleLogout}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

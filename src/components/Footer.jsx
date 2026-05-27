@@ -14,7 +14,10 @@ export default function Footer() {
               <img src="/images/Logo 1.png" alt="VITA AWARD" style={{ height: '42px' }} />
             </div>
             <p>{t('footer.desc')}</p>
-            <p style={{ marginTop: '14px', color: 'var(--text-muted)', fontSize: '13px' }}>{t('footer.org')}</p>
+            <p style={{ marginTop: '14px', color: 'var(--text-muted)', fontSize: '13px', lineHeight: '1.6' }}>
+              {t('footer.org')}<br />
+              {t('footer.media')}
+            </p>
           </div>
           <div className="foot-col">
             <h5>{t('footer.links')}</h5>

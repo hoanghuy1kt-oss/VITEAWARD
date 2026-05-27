@@ -118,8 +118,8 @@
   },
   "footer": {
     "desc": "Giải thưởng Du lịch Việt Nam 2025 — Tôn vinh giá trị, kết nối tương lai.",
-    "org": "Đơn vị tổ chức: Tạp chí Vietnam Travel",
-    "media": "Bảo trợ truyền thông: Tạp chí Vietnam Travel",
+    "org": "Đơn vị chỉ đạo: Hiệp hội Du lịch Việt Nam",
+    "media": "Đơn vị thực hiện và truyền thông: Tạp chí Vietnam Travel",
     "links": "Liên kết",
     "support": "Hỗ trợ",
     "contact": "Liên hệ",
@@ -163,6 +163,9 @@
     "toast_vote_success": "Bình chọn thành công! Cảm ơn bạn đã tham gia.",
     "toast_unvote_success": "Đã huỷ bình chọn thành công!",
     "toast_logout": "Đăng xuất thành công!",
-    "back_to_cat": "Quay lại hạng mục"
+    "back_to_cat": "Quay lại hạng mục",
+    "welcome": "Chào mừng bạn đến với",
+    "welcome_desc": "Đăng nhập thành công! Giờ đây bạn đã có thể bình chọn cho các đề cử yêu thích.",
+    "start_vote": "Bắt đầu bình chọn"
   }
 }

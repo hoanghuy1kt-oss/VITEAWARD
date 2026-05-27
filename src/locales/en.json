@@ -118,8 +118,8 @@
   },
   "footer": {
     "desc": "Vietnam Tourism Awards 2025 — Honoring values, connecting the future.",
-    "org": "Organizer: Vietnam Travel Magazine",
-    "media": "Media Sponsor: Vietnam Travel Magazine",
+    "org": "Governing Body: Vietnam Tourism Association",
+    "media": "Executing & Media Agency: Vietnam Travel Magazine",
     "links": "Links",
     "support": "Support",
     "contact": "Contact",
@@ -163,6 +163,9 @@
     "toast_vote_success": "Vote successful! Thank you for participating.",
     "toast_unvote_success": "Vote successfully removed!",
     "toast_logout": "Logged out successfully!",
-    "back_to_cat": "Back to Categories"
+    "back_to_cat": "Back to Categories",
+    "welcome": "Welcome to",
+    "welcome_desc": "You have successfully logged in. Now you can participate in voting for your favorite nominees.",
+    "start_vote": "Start Voting Now"
   }
 }

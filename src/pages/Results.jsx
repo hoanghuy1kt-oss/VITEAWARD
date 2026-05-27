@@ -5,6 +5,9 @@ import ScrollReveal from '../components/ScrollReveal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { VOTE_CATEGORIES } from '../data/categories';
 
+import { db, isConfigured } from '../utils/firebase';
+import { collection, query, where, onSnapshot, getDocs } from 'firebase/firestore';
+
 const generateDummyLeaderboard = (subId, subTitle, isEn) => {
   const images = [
     'https://picsum.photos/seed/halong/600/400',
@@ -58,32 +61,19 @@ export default function Results() {
   const { t, i18n } = useTranslation();
   const isEn = i18n.language === 'en';
 
-
-
-  
-  // Tầng 1: Chọn Tab Nhóm Lớn
+  const [categories, setCategories] = useState([]);
   const [currentCat, setCurrentCat] = useState('cat5');
-  const activeCategory = VOTE_CATEGORIES.find(c => c.id === currentCat) || VOTE_CATEGORIES[0];
-
-  // Tầng 2: Chọn Hạng mục con
-  const [selectedSub, setSelectedSub] = useState(activeCategory.items[0]);
-
-  // Tầng 3: Bảng xếp hạng của Hạng mục con đang chọn
+  const [selectedSub, setSelectedSub] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
-
-  // Khi đổi Tab lớn -> tự động focus vào Hạng mục con đầu tiên của Tab đó
-  useEffect(() => {
-    const cat = VOTE_CATEGORIES.find(c => c.id === currentCat);
-    if (cat && cat.items.length > 0) {
-      setSelectedSub(cat.items[0]);
-    }
-  }, [currentCat]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   // Dropdown state & logic
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileCatDropdownOpen, setIsMobileCatDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   
+  const activeCategory = categories.find(c => c.id === currentCat) || categories[0];
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -94,34 +84,92 @@ export default function Results() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Khi Hạng mục con thay đổi -> Tạo Leaderboard mới
+  // 1. Load Categories & Sub-categories
   useEffect(() => {
-    if (selectedSub) {
-      setLeaderboard(generateDummyLeaderboard(selectedSub.id, isEn ? selectedSub.titleEn || selectedSub.title : selectedSub.title, isEn));
+    const loadCategoriesData = async () => {
+      if (!isConfigured) {
+        setCategories(VOTE_CATEGORIES);
+        setLoadingCategories(false);
+        return;
+      }
+      try {
+        const catSnap = await getDocs(collection(db, 'categories'));
+        const subSnap = await getDocs(collection(db, 'subCategories'));
+        
+        if (catSnap.empty || subSnap.empty) {
+          setCategories([]);
+        } else {
+          const catList = catSnap.docs.map(d => ({ id: d.id, ...d.data(), items: [] }));
+          catList.sort((a,b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+          
+          const subList = subSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          
+          catList.forEach(c => {
+            c.items = subList.filter(s => s.categoryId === c.id);
+          });
+          
+          setCategories(catList);
+        }
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setCategories([]);
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+    loadCategoriesData();
+  }, []);
+
+  // 2. Set default subcategory on category change
+  useEffect(() => {
+    if (activeCategory && activeCategory.items.length > 0) {
+      setSelectedSub(activeCategory.items[0]);
     }
+  }, [currentCat, categories]);
+
+  // 3. Subscribe to Nominees with real-time snapshots
+  useEffect(() => {
+    if (!selectedSub) return;
+
+    if (!isConfigured) {
+      // Mock mode
+      setLeaderboard(generateDummyLeaderboard(selectedSub.id, isEn ? selectedSub.titleEn || selectedSub.title : selectedSub.title, isEn));
+      return;
+    }
+
+    const q = query(collection(db, 'nominees'), where('subCategoryId', '==', selectedSub.id));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      list.sort((a, b) => b.votesCount - a.votesCount);
+      setLeaderboard(list);
+    }, (error) => {
+      console.error("Error loading live leaderboard snapshot:", error);
+    });
+
+    return () => unsubscribe();
   }, [selectedSub, isEn]);
 
-  // Hiệu ứng Live Update (nhảy phiếu)
+  // Artificial Live Update (only in mock offline mode)
   useEffect(() => {
+    if (isConfigured || !selectedSub) return;
     const timer = setInterval(() => {
       setLeaderboard(prev => {
         if (!prev || prev.length === 0) return prev;
         const next = [...prev];
-        // Chọn ngẫu nhiên 1-3 đề cử để tăng phiếu
         const numToUpdate = Math.floor(Math.random() * 3) + 1;
         for (let i = 0; i < numToUpdate; i++) {
           const pickIdx = Math.floor(Math.random() * next.length);
-          next[pickIdx] = { ...next[pickIdx], votes: next[pickIdx].votes + Math.floor(Math.random() * 25) + 5 };
+          const currentVal = next[pickIdx].votes || next[pickIdx].votesCount || 0;
+          next[pickIdx] = { ...next[pickIdx], votes: currentVal + Math.floor(Math.random() * 25) + 5 };
         }
-        // Sắp xếp lại sau khi tăng phiếu
-        return next.sort((a,b) => b.votes - a.votes);
+        return next.sort((a,b) => (b.votes || b.votesCount || 0) - (a.votes || a.votesCount || 0));
       });
     }, 2500);
     return () => clearInterval(timer);
-  }, [selectedSub]);
+  }, [selectedSub, categories]);
 
-  const top = [...leaderboard].sort((a,b) => b.votes - a.votes);
-  const max = top[0]?.votes || 1;
+  const top = [...leaderboard].sort((a,b) => (b.votes || b.votesCount || 0) - (a.votes || a.votesCount || 0));
+  const max = top[0]?.votes || top[0]?.votesCount || 1;
 
   // New CARD_CFG mapping
   const CARD_CFG = [
@@ -132,12 +180,72 @@ export default function Results() {
   const RING_IMGS = ['/extracted_assets/top1_ring.png', '/extracted_assets/top2_ring.png', '/extracted_assets/top2_ring.png'];
   const RING_FILTER = ['none', 'none', 'hue-rotate(-160deg) saturate(1.5)'];
 
-  // Format title into two lines
+  // Format title into two lines without breaking compound words/phrases
   const formatTitle = (text) => {
     if (!text) return { line1: '', line2: '' };
     const words = text.split(' ');
     if (words.length <= 3) return { line1: text, line2: '' };
-    const mid = Math.ceil(words.length / 2);
+    
+    let mid = Math.ceil(words.length / 2);
+    
+    // List of common Vietnamese compound word pairs (lowercase) to keep together
+    const compoundPairs = [
+      ['sáng', 'tạo'], ['quốc', 'tế'], ['du', 'lịch'], ['lữ', 'hành'],
+      ['lưu', 'trú'], ['cơ', 'sở'], ['nhà', 'hàng'], ['vận', 'chuyển'],
+      ['hàng', 'đầu'], ['mới', 'nổi'], ['hấp', 'dẫn'], ['thu', 'hút'],
+      ['đặc', 'sắc'], ['đột', 'phá'], ['thương', 'gia'], ['khách', 'đoàn'],
+      ['cao', 'cấp'], ['chuyên', 'đề'], ['hiệu', 'quả'], ['truyền', 'thông'],
+      ['thực', 'hiện'], ['chỉ', 'đạo'], ['hiệp', 'hội'], ['du', 'thuyền'],
+      ['hàng', 'không'], ['ẩm', 'thực'], ['trải', 'nghiệm'], ['văn', 'hóa'],
+      ['thiên', 'nhiên'], ['mạo', 'hiểm'], ['chủ', 'đề'], ['bãi', 'biển'],
+      ['doanh', 'nghiệp'], ['đón', 'khách'], ['yêu', 'thích'], ['dịch', 'vụ'],
+      ['ăn', 'uống'], ['giới', 'trẻ'], ['lựa', 'chọn'], ['du', 'khách'],
+      ['kinh', 'doanh'], ['chính', 'sách'], ['địa', 'phương'], ['phát', 'triển'],
+      ['nghỉ', 'dưỡng'], ['quảng', 'bá']
+    ];
+    
+    const cleanWord = (w) => w ? w.toLowerCase().replace(/[,.:;!?"'“”()]/g, '') : '';
+    
+    // Helper to check if a index boundary falls inside a compound word
+    const checkCompoundAt = (idx) => {
+      if (idx <= 0 || idx >= words.length) return false;
+      const prev = cleanWord(words[idx - 1]);
+      const curr = cleanWord(words[idx]);
+      return compoundPairs.some(pair => pair[0] === prev && pair[1] === curr);
+    };
+
+    // Helper to check if a word is a connector
+    const isConnector = (word) => {
+      const connectors = ['được', 'có', 'và', 'cho', 'của', 'tại', 'trên', 'bởi', 'là', 'qua'];
+      return connectors.includes(cleanWord(word));
+    };
+
+    // First, check if there is a connector near the midpoint that we should split before
+    let foundConnectorIdx = -1;
+    // We prefer splitting before a connector if it keeps Line 1 length >= 3
+    for (let offset of [0, -1, -2]) {
+      const checkIdx = mid + offset;
+      if (checkIdx >= 3 && checkIdx < words.length - 2) {
+        if (isConnector(words[checkIdx])) {
+          foundConnectorIdx = checkIdx;
+          break;
+        }
+      }
+    }
+
+    if (foundConnectorIdx !== -1) {
+      mid = foundConnectorIdx;
+    }
+
+    // Now adjust for compound words if the split boundary falls inside a compound word
+    if (checkCompoundAt(mid)) {
+      if (mid > words.length / 2) {
+        mid = mid - 1;
+      } else {
+        mid = mid + 1;
+      }
+    }
+
     return {
       line1: words.slice(0, mid).join(' '),
       line2: words.slice(mid).join(' ')
@@ -145,6 +253,22 @@ export default function Results() {
   };
   const titleText = isEn && selectedSub?.titleEn ? selectedSub.titleEn : selectedSub?.title;
   const { line1, line2 } = formatTitle(titleText);
+
+  if (loadingCategories) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--navy)' }}>
+        <p style={{ color: '#fff', fontSize: '1.2rem' }}>Đang tải hạng mục kết quả...</p>
+      </div>
+    );
+  }
+
+  if (categories.length === 0) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: 'var(--navy)', flexDirection: 'column', gap: '20px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1.2rem' }}>Hiện chưa có hạng mục nào được cấu hình kết quả.</p>
+      </div>
+    );
+  }
 
   return (
     <PageTransition>
@@ -560,7 +684,7 @@ export default function Results() {
             {/* TẦNG 1: TAB NHÓM LỚN - ĐƯA LÊN TRÊN */}
             <div className="vote-toolbar" style={{ overflowX: 'auto', paddingBottom: '10px', margin: '0 auto 30px auto', maxWidth: 'max-content' }}>
               <div className="vote-tabs" style={{ display: 'flex', gap: '10px', minWidth: 'max-content', padding: '0 10px' }}>
-                {VOTE_CATEGORIES.map(cat => (
+                {categories.map(cat => (
                   <button
                     key={cat.id}
                     className={currentCat === cat.id ? 'active' : ''}
@@ -587,14 +711,14 @@ export default function Results() {
                     <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34" />
                     <path d="M12 2a4 4 0 0 0-4 4v6h8V6a4 4 0 0 0-4-4z" />
                   </svg>
-                  {isEn ? 'Category:' : 'Hạng mục:'} <strong>{isEn && activeCategory.labelEn ? activeCategory.labelEn : activeCategory.label}</strong>
+                  {isEn ? 'Category:' : 'Hạng mục:'} <strong>{isEn && activeCategory?.labelEn ? activeCategory.labelEn : activeCategory?.label}</strong>
                 </span>
                 <span className={`chevron ${isMobileCatDropdownOpen ? 'open' : ''}`}>▼</span>
               </button>
               
               {isMobileCatDropdownOpen && (
                 <div className="vote-mobile-options">
-                  {VOTE_CATEGORIES.map(cat => (
+                  {categories.map(cat => (
                     <button
                       key={cat.id}
                       className={`vote-mobile-option ${currentCat === cat.id ? 'active' : ''}`}
@@ -634,7 +758,7 @@ export default function Results() {
                   </div>
                   
                   <div className={`custom-select-menu ${isDropdownOpen ? 'open' : ''}`}>
-                    {activeCategory.items.map(sub => (
+                    {activeCategory?.items?.map(sub => (
                       <button
                         key={sub.id}
                         onClick={() => {
@@ -672,7 +796,8 @@ export default function Results() {
                   {/* DANH SÁCH Top 10 */}
                   <div className="list-rows">
                     {top.map((e, i) => {
-                      const pct = Math.max(8, (e.votes / max) * 100);
+                      const votes = e.votes || e.votesCount || 0;
+                      const pct = Math.max(8, (votes / max) * 100);
                       
                       // Row and coin color distinctions
                       let rowStyleClass = '';
@@ -719,12 +844,25 @@ export default function Results() {
                           </div>
                           
                           <div className="list-thumb">
-                            <img src={e.image} alt={e.name} loading="lazy" />
+                            {e.url ? (
+                              <a href={e.url} target="_blank" rel="noopener noreferrer">
+                                <img src={e.imageUrl || e.image || '/images/hero-collage.png'} alt={e.name} loading="lazy" />
+                              </a>
+                            ) : (
+                              <img src={e.imageUrl || e.image || '/images/hero-collage.png'} alt={e.name} loading="lazy" />
+                            )}
                           </div>
                           
                           <div className="list-info">
                             <div className="list-name" style={{ color: i === 0 ? 'var(--gold-200)' : i === 1 ? '#cbd5e1' : i === 2 ? '#f6c768' : '#fff' }}>
-                              {e.name}
+                              {e.url ? (
+                                <a href={e.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                                  {isEn ? e.nameEn || e.name : e.name}
+                                  <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>↗</span>
+                                </a>
+                              ) : (
+                                isEn ? e.nameEn || e.name : e.name
+                              )}
                             </div>
                             <div className="list-bar-wrap">
                               <div className="list-bar" style={{ 
@@ -737,12 +875,12 @@ export default function Results() {
 
                           <div className="list-votes">
                             <motion.strong
-                              key={e.votes}
+                              key={votes}
                               initial={{ scale: 1.3 }}
                               animate={{ scale: 1 }}
                               style={{ color: i === 0 ? 'var(--gold-200)' : i === 1 ? '#cbd5e1' : i === 2 ? '#f6c768' : '#fff' }}
                             >
-                              {e.votes.toLocaleString('vi-VN')}
+                              {votes.toLocaleString('vi-VN')}
                             </motion.strong>
                             <small>{t('results.votes') || 'Lượt Vote'}</small>
                           </div>

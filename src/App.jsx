@@ -17,6 +17,11 @@ import Results from './pages/Results';
 import News from './pages/News';
 import Events from './pages/Events';
 import Sponsors from './pages/Sponsors';
+import Admin from './pages/Admin';
+
+import { auth, db, isConfigured } from './utils/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -35,6 +40,7 @@ function AnimatedRoutes() {
         <Route path="/news" element={<News />} />
         <Route path="/events" element={<Events />} />
         <Route path="/sponsors" element={<Sponsors />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </AnimatePresence>
   );
@@ -45,8 +51,68 @@ export const AuthContext = createContext();
 export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [user, setUser] = useState({ name: 'Hoàng Huy', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Huy' });
+  const [isLoggedIn, setIsLoggedIn] = useState(!isConfigured);
+  const [user, setUser] = useState(!isConfigured ? { name: 'Hoàng Huy', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Huy', role: 'admin' } : null);
+
+  useEffect(() => {
+    if (!isConfigured) return;
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          let userDoc = await getDoc(userDocRef);
+          
+          // Retry logic: if the user just registered, setDoc might still be in progress.
+          // Retry up to 3 times with 500ms intervals if doc doesn't exist yet.
+          if (!userDoc.exists()) {
+            for (let i = 0; i < 3; i++) {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              userDoc = await getDoc(userDocRef);
+              if (userDoc.exists()) break;
+            }
+          }
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUser({
+              uid: firebaseUser.uid,
+              name: userData.name || firebaseUser.displayName || 'Voter',
+              email: firebaseUser.email,
+              phone: userData.phone || firebaseUser.phoneNumber || '',
+              avatar: userData.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${firebaseUser.uid}`,
+              role: userData.role || 'user'
+            });
+          } else {
+            setUser({
+              uid: firebaseUser.uid,
+              name: firebaseUser.displayName || 'Voter',
+              email: firebaseUser.email,
+              phone: firebaseUser.phoneNumber || '',
+              avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${firebaseUser.uid}`,
+              role: 'user'
+            });
+          }
+          setIsLoggedIn(true);
+        } catch (err) {
+          console.error("Error fetching user data:", err);
+          setUser({
+            uid: firebaseUser.uid,
+            name: firebaseUser.displayName || 'Voter',
+            email: firebaseUser.email,
+            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${firebaseUser.uid}`,
+            role: 'user'
+          });
+          setIsLoggedIn(true);
+        }
+      } else {
+        setUser(null);
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <ToastProvider>

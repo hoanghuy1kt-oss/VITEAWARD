@@ -1,0 +1,163 @@
+//@version=5
+indicator("MTF Candles - Sidebar Master", overlay=true, max_boxes_count=500, max_lines_count=500, max_labels_count=100)
+
+// ==========================================
+// CÀI ĐẶT CHUNG & BỐ CỤC
+// ==========================================
+gp_gen = "Cài đặt chung"
+max_candles  = input.int(10, "Số lượng nến hiển thị", minval=1, maxval=50, group=gp_gen, tooltip="Số lượng nến của mỗi khung thời gian muốn vẽ")
+offset       = input.int(10, "Khoảng cách đến nến mới nhất", minval=1, group=gp_gen, tooltip="Số lượng cột trống từ nến hiện tại đến cây nến HTF đầu tiên")
+candle_w     = input.int(4, "Độ rộng nến (bars)", minval=1, maxval=15, group=gp_gen)
+candle_s     = input.int(1, "Khoảng cách giữa các nến", minval=0, maxval=5, group=gp_gen)
+group_s      = input.int(12, "Khoảng cách giữa 2 khung", minval=1, maxval=30, group=gp_gen, tooltip="Khoảng cách ngăn cách cụm nến TF1 và cụm nến TF2")
+
+gp_ma = "Đường MA 200 Khung Lớn"
+show_ma      = input.bool(true, "Hiển thị đường MA 200", group=gp_ma, tooltip="Vẽ đường MA 200 trực tiếp chạy qua các nến HTF")
+tf1_ma_col   = input.color(#ffd700, "Màu MA 200 của TF1 (4H)", group=gp_ma)
+tf2_ma_col   = input.color(#00e5ff, "Màu MA 200 của TF2 (1D)", group=gp_ma)
+
+// ==========================================
+// KHUNG THỜI GIAN 1 (Mặc định: 4H)
+// ==========================================
+gp_tf1 = "Khung thời gian 1 (4H)"
+show_tf1 = input.bool(true, "Hiển thị TF1", group=gp_tf1)
+tf1_val  = input.timeframe("240", "Chọn Khung TF1", group=gp_tf1)
+tf1_bull = input.color(color.new(#089981, 15), "Màu nến Tăng TF1", group=gp_tf1)
+tf1_bear = input.color(color.new(#f23645, 15), "Màu nến Giảm TF1", group=gp_tf1)
+tf1_wick_bull = input.color(color.new(#089981, 0), "Màu viền & râu Tăng TF1", group=gp_tf1)
+tf1_wick_bear = input.color(color.new(#f23645, 0), "Màu viền & râu Giảm TF1", group=gp_tf1)
+
+// ==========================================
+// KHUNG THỜI GIAN 2 (Mặc định: 1D)
+// ==========================================
+gp_tf2 = "Khung thời gian 2 (1D)"
+show_tf2 = input.bool(true, "Hiển thị TF2", group=gp_tf2)
+tf2_val  = input.timeframe("D", "Chọn Khung TF2", group=gp_tf2)
+tf2_bull = input.color(color.new(#089981, 15), "Màu nến Tăng TF2", group=gp_tf2)
+tf2_bear = input.color(color.new(#f23645, 15), "Màu nến Giảm TF2", group=gp_tf2)
+tf2_wick_bull = input.color(color.new(#089981, 0), "Màu viền & râu Tăng TF2", group=gp_tf2)
+tf2_wick_bear = input.color(color.new(#f23645, 0), "Màu viền & râu Giảm TF2", group=gp_tf2)
+
+// ==========================================
+// HÀM CHUYỂN ĐỔI TÊN KHUNG THỜI GIAN ĐẸP
+// ==========================================
+f_get_tf_name(tf) =>
+    switch tf
+        "240" => "4H"
+        "D"   => "1D"
+        "60"  => "1H"
+        "180" => "3H"
+        "720" => "12H"
+        "W"   => "1W"
+        "M"   => "1M"
+        => tf
+
+// ==========================================
+// HÀM LẤY LỊCH SỬ NẾN & ĐƯỜNG MA 200 TỪ HTF
+// ==========================================
+f_get_history(size) =>
+    opens  = array.new_float(size)
+    highs  = array.new_float(size)
+    lows   = array.new_float(size)
+    closes = array.new_float(size)
+    ma200  = array.new_float(size)
+    
+    // Tính toán MA 200 trên khung thời gian HTF
+    ma_val = ta.sma(close, 200)
+    
+    for i = 0 to size - 1
+        array.set(opens,  i, open[i])
+        array.set(highs,  i, high[i])
+        array.set(lows,   i, low[i])
+        array.set(closes, i, close[i])
+        array.set(ma200,  i, ma_val[i])
+    [opens, highs, lows, closes, ma200]
+
+[tf1_opens, tf1_highs, tf1_lows, tf1_closes, tf1_ma200] = request.security(syminfo.tickerid, tf1_val, f_get_history(50), gaps=barmerge.gaps_off)
+[tf2_opens, tf2_highs, tf2_lows, tf2_closes, tf2_ma200] = request.security(syminfo.tickerid, tf2_val, f_get_history(50), gaps=barmerge.gaps_off)
+
+is_lower_tf1 = timeframe.in_seconds(timeframe.period) < timeframe.in_seconds(tf1_val)
+is_lower_tf2 = timeframe.in_seconds(timeframe.period) < timeframe.in_seconds(tf2_val)
+
+// ==========================================
+// HÀM VẼ NẾN & ĐƯỜNG MA LÊN SIDEBAR
+// ==========================================
+var box[]  side_boxes  = array.new_box()
+var line[] side_wicks  = array.new_line()
+var label[] side_labels = array.new_label()
+
+f_clear_drawings() =>
+    while array.size(side_boxes) > 0
+        box.delete(array.shift(side_boxes))
+    while array.size(side_wicks) > 0
+        line.delete(array.shift(side_wicks))
+    while array.size(side_labels) > 0
+        label.delete(array.shift(side_labels))
+
+f_draw_sidebar_candles(tf_title, opens, highs, lows, closes, ma200_arr, draw_ma, ma_col, start_x, num_c, w, s, bull_col, bear_col, border_bull, border_bear) =>
+    float max_high = na
+    int prev_mid_x   = na  // ĐÃ SỬA: Chuyển kiểu dữ liệu từ float sang int để khớp yêu cầu x1, x2 của line.new
+    float prev_ma_y  = na
+    
+    for i = 0 to num_c - 1
+        int hist_idx = num_c - 1 - i
+        float o = array.get(opens, hist_idx)
+        float h = array.get(highs, hist_idx)
+        float l = array.get(lows, hist_idx)
+        float c = array.get(closes, hist_idx)
+        float ma = array.get(ma200_arr, hist_idx)
+        
+        int left_x  = start_x + i * (w + s)
+        int right_x = left_x + w
+        int mid_x   = left_x + math.round(w / 2)
+        
+        float top_y = math.max(o, c)
+        float bot_y = math.min(o, c)
+        
+        bool is_bull = c >= o
+        color body_col = is_bull ? bull_col : bear_col
+        color border_col = is_bull ? border_bull : border_bear
+        
+        max_high := i == 0 ? h : math.max(max_high, h)
+        if draw_ma and not na(ma)
+            max_high := math.max(max_high, ma)
+        
+        // Vẽ thân nến (Box)
+        new_box = box.new(left_x, top_y, right_x, bot_y, bgcolor=body_col, border_color=border_col, border_style=line.style_solid, xloc=xloc.bar_index)
+        // Vẽ râu nến (Line) - Chỉnh độ dày width=2
+        new_wick = line.new(mid_x, h, mid_x, l, color=border_col, width=2, xloc=xloc.bar_index)
+        
+        array.push(side_boxes, new_box)
+        array.push(side_wicks, new_wick)
+        
+        // Vẽ đường MA 200 nối giữa các nến
+        if draw_ma and not na(ma)
+            if not na(prev_mid_x) and not na(prev_ma_y)
+                new_ma_line = line.new(prev_mid_x, prev_ma_y, mid_x, ma, color=ma_col, width=2, style=line.style_solid, xloc=xloc.bar_index)
+                array.push(side_wicks, new_ma_line)
+            prev_mid_x := mid_x
+            prev_ma_y  := ma
+
+    // Vẽ nhãn tiêu đề ở phía TRÊN nhóm nến
+    int label_x = start_x + math.round((num_c * (w + s) - s) / 2)
+    new_label = label.new(label_x, max_high, text=tf_title, xloc=xloc.bar_index, color=color.new(color.white, 100), textcolor=color.white, style=label.style_label_down, size=size.large)
+    array.push(side_labels, new_label)
+
+if barstate.islast
+    f_clear_drawings()
+    int start_x1 = last_bar_index + offset
+    
+    // Vẽ cụm nến TF1 (4H) + Đường MA 200
+    if show_tf1 and is_lower_tf1
+        tf1_name = f_get_tf_name(tf1_val)
+        f_draw_sidebar_candles(tf1_name, tf1_opens, tf1_highs, tf1_lows, tf1_closes, tf1_ma200, show_ma, tf1_ma_col, start_x1, max_candles, candle_w, candle_s, tf1_bull, tf1_bear, tf1_wick_bull, tf1_wick_bear)
+        
+    int num_candles_tf1 = (show_tf1 and is_lower_tf1) ? max_candles : 0
+    int start_x2 = show_tf1 and is_lower_tf1 ? 
+                   (start_x1 + num_candles_tf1 * (candle_w + candle_s) - candle_s + group_s) : 
+                   start_x1
+                   
+    // Vẽ cụm nến TF2 (1D) + Đường MA 200
+    if show_tf2 and is_lower_tf2
+        tf2_name = f_get_tf_name(tf2_val)
+        f_draw_sidebar_candles(tf2_name, tf2_opens, tf2_highs, tf2_lows, tf2_closes, tf2_ma200, show_ma, tf2_ma_col, start_x2, max_candles, candle_w, candle_s, tf2_bull, tf2_bear, tf2_wick_bull, tf2_wick_bear)

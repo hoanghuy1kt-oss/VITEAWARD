@@ -10,6 +10,119 @@ import { AuthContext } from '../App';
 import { db, isConfigured } from '../utils/firebase';
 import { collection, doc, getDocs, query, where, runTransaction } from 'firebase/firestore';
 
+const parseTitle = (title, isEn) => {
+  if (!title) return { line1: '', line2: '', line3: '' };
+  let t = title.trim();
+  
+  if (isEn) {
+    if (t.toLowerCase().startsWith('leading')) {
+      let rest = t.substring(7).trim();
+      if (rest.toLowerCase().endsWith('destinations')) {
+        return { line1: 'LEADING', line2: rest.substring(0, rest.length - 12).trim().toUpperCase(), line3: 'DESTINATIONS' };
+      }
+      return { line1: 'LEADING', line2: rest.toUpperCase(), line3: 'AWARD' };
+    }
+    return { line1: 'VOTE CATEGORY', line2: t.toUpperCase(), line3: '' };
+  }
+
+  // Standardize some specific complex Vietnamese titles first
+  if (t.includes('Địa phương có chính sách')) {
+    return { line1: 'ĐỊA PHƯƠNG', line2: 'ĐỘT PHÁ SÁNG TẠO', line3: 'HÀNG ĐẦU' };
+  }
+  if (t.includes('quảng bá du lịch hiệu quả trên TikTok')) {
+    return { line1: 'QUẢNG BÁ DU LỊCH', line2: 'HIỆU QUẢ TIKTOK', line3: 'HÀNG ĐẦU' };
+  }
+  if (t.includes('Cơ sở kinh doanh dịch vụ ăn uống')) {
+    return { line1: 'CƠ SỞ ĂN UỐNG', line2: 'DU LỊCH XANH', line3: 'HÀNG ĐẦU' };
+  }
+  if (t.includes('Cơ sở lưu trú du lịch có nhiều dịch vụ đa dạng')) {
+    return { line1: 'CƠ SỞ LƯU TRÚ', line2: 'DỊCH VỤ ĐA DẠNG', line3: 'HÀNG ĐẦU' };
+  }
+  
+  let line1 = '';
+  let line2 = '';
+  let line3 = '';
+  
+  // Extract suffix
+  if (t.toLowerCase().endsWith('hàng đầu')) {
+    line3 = 'HÀNG ĐẦU';
+    t = t.substring(0, t.length - 8).trim();
+  } else if (t.toLowerCase().endsWith('tốt nhất')) {
+    line3 = 'TỐT NHẤT';
+    t = t.substring(0, t.length - 8).trim();
+  }
+  
+  // Extract prefix
+  const prefixes = [
+    { key: 'Điểm đến du lịch', val: 'ĐIỂM ĐẾN' },
+    { key: 'Điểm đến', val: 'ĐIỂM ĐẾN' },
+    { key: 'Doanh nghiệp du lịch lữ hành', val: 'DOANH NGHIỆP' },
+    { key: 'Doanh nghiệp lữ hành', val: 'DOANH NGHIỆP' },
+    { key: 'Doanh nghiệp', val: 'DOANH NGHIỆP' },
+    { key: 'Cơ sở lưu trú du lịch', val: 'CƠ SỞ LƯU TRÚ' },
+    { key: 'Cơ sở lưu trú', val: 'CƠ SỞ LƯU TRÚ' },
+    { key: 'Khu nghỉ dưỡng', val: 'KHU NGHỈ DƯỠNG' },
+    { key: 'Nhà hàng', val: 'NHÀ HÀNG' },
+    { key: 'Du thuyền sang trọng', val: 'DU THUYỀN SANG TRỌNG' },
+    { key: 'Du thuyền', val: 'DU THUYỀN' },
+    { key: 'Hãng hàng không', val: 'HÃNG HÀNG KHÔNG' },
+    { key: 'Công viên chủ đề', val: 'CÔNG VIÊN CHỦ ĐỀ' },
+    { key: 'Sân golf', val: 'SÂN GOLF' },
+    { key: 'Bãi biển', val: 'BÃI BIỂN' },
+    { key: 'Làng Du lịch tốt nhất', val: 'LÀNG DU LỊCH' },
+    { key: 'Làng Du lịch', val: 'LÀNG DU LỊCH' },
+    { key: 'Làng du lịch', val: 'LÀNG DU LỊCH' },
+    { key: 'Sản phẩm du lịch mới nổi', val: 'SẢN PHẨM MỚI NỔI' },
+    { key: 'Sản phẩm du lịch', val: 'SẢN PHẨM' }
+  ];
+  
+  for (const item of prefixes) {
+    if (t.toLowerCase().startsWith(item.key.toLowerCase())) {
+      line1 = item.val;
+      t = t.substring(item.key.length).trim();
+      break;
+    }
+  }
+  
+  // Clean up the middle text (t)
+  let mid = t.toUpperCase().replace(/^ĐƯỢC\s+/, '').replace(/^CÓ\s+/, '').replace(/^MANG\s+/, '').trim();
+  mid = mid.replace(/–/g, '-');
+  
+  // Shorten some overly long middle strings to make them look beautiful
+  if (mid === 'MỚI NỔI CÓ SỨC HẤP DẪN') mid = 'MỚI NỔI HẤP DẪN';
+  if (mid === 'CỘNG ĐỒNG THU HÚT KHÁCH DU LỊCH') mid = 'DU LỊCH CỘNG ĐỒNG';
+  if (mid === 'SINH THÁI') mid = 'DU LỊCH SINH THÁI';
+  if (mid === 'XANH') mid = 'DU LỊCH XANH';
+  if (mid === 'MẠO HIỂM') mid = 'DU LỊCH MẠO HIỂM';
+  if (mid === 'HẤP DẪN') mid = 'DU LỊCH HẤP DẪN';
+  if (mid === 'THIÊN NHIÊN KỲ VĨ THU HÚT KHÁCH') mid = 'THIÊN NHIÊN KỲ VĨ';
+  if (mid === 'DI SẢN - VĂN HÓA THU HÚT KHÁCH') mid = 'DI SẢN - VĂN HÓA';
+  if (mid === 'ĐƯỢC THƯƠNG GIA LỰA CHỌN') mid = 'THƯƠNG GIA LỰA CHỌN';
+  if (mid === 'ĐƯỢC KHÁCH ĐOÀN LỰA CHỌN') mid = 'KHÁCH ĐOÀN LỰA CHỌN';
+  if (mid === 'CÓ NHIỀU DỊCH VỤ ĐA DẠNG VÀ CHẤT LƯỢNG') mid = 'DỊCH VỤ ĐA DẠNG';
+  if (mid === 'ĐƯỢC DU KHÁCH YÊU THÍCH') mid = 'ĐƯỢC YÊU THÍCH';
+  if (mid === 'ĐƯỢC KHÁCH YÊU THÍCH') mid = 'ĐƯỢC YÊU THÍCH';
+  if (mid === 'ĐÓN KHÁCH DU LỊCH') mid = 'ĐÓN KHÁCH';
+  if (mid === 'ĐƯỢC GIỚI TRẺ YÊU THÍCH') mid = 'GIỚI TRẺ YÊU THÍCH';
+  if (mid === 'ĐƯỢC KHÁCH DU LỊCH LỰA CHỌN NHIỀU QUA PHIM, ẢNH') mid = 'DU LỊCH QUA PHIM ẢNH';
+  
+  line2 = mid;
+  
+  // Adjust if line1 is still empty
+  if (!line1) {
+    line1 = 'HẠNG MỤC';
+    line2 = title.toUpperCase();
+  }
+  
+  // If line2 is empty (e.g. "Làng Du lịch tốt nhất"), rearrange
+  if (!line2) {
+    line2 = line3;
+    line3 = '';
+  }
+  
+  return { line1, line2, line3 };
+};
+
 export default function Vote() {
   const { t, i18n } = useTranslation();
   const isEn = i18n.language === 'en';
@@ -264,6 +377,123 @@ export default function Vote() {
   return (
     <PageTransition>
       <section id="vote" style={{ paddingTop: '120px', paddingBottom: '100px', background: 'linear-gradient(180deg,transparent,rgba(14,36,85,.3),transparent)', minHeight: '100vh' }}>
+        <style>{`
+          .subcategory-card-premium {
+            background: linear-gradient(135deg, rgba(28, 52, 120, 0.7) 0%, rgba(10, 20, 50, 0.9) 100%) !important;
+            border: 1.5px solid rgba(212, 175, 55, 0.28) !important;
+            border-radius: 20px !important;
+            padding: 26px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            min-height: 180px !important;
+            height: 100% !important;
+            position: relative !important;
+            overflow: hidden !important;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+            backdrop-filter: blur(14px) !important;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            aspect-ratio: auto !important;
+          }
+
+          /* Shimmer metallic gold sheen effect */
+          .subcategory-card-premium::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.25), transparent) !important;
+            transform: skewX(-20deg) !important;
+            pointer-events: none !important;
+            z-index: 3 !important;
+          }
+
+          .subcategory-card-premium:hover::after {
+            left: 150% !important;
+            transition: all 0.95s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          }
+
+          .subcategory-card-premium:hover {
+            transform: translateY(-6px) !important;
+            background: linear-gradient(135deg, rgba(35, 65, 145, 0.8) 0%, rgba(15, 30, 75, 0.98) 100%) !important;
+            border-color: rgba(212, 175, 55, 0.75) !important;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5), 0 0 30px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+          }
+
+          .logo-image-premium {
+            filter: brightness(2.8) contrast(1.2) drop-shadow(0 0 6px rgba(212, 175, 55, 0.7)) !important;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%) !important;
+            padding: 6px !important;
+            border-radius: 50% !important;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            flex-shrink: 0 !important;
+          }
+
+          .subcategory-card-premium:hover .logo-image-premium {
+            filter: brightness(3.5) contrast(1.3) drop-shadow(0 0 10px rgba(212, 175, 55, 0.98)) !important;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, transparent 70%) !important;
+            transform: scale(1.12) !important;
+          }
+
+          .subcategory-card-premium .vc-btn-vote {
+            background: linear-gradient(135deg, #d4af37 0%, #f3df95 100%) !important;
+            border: none !important;
+            color: #050d28 !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.8px !important;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.3), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            width: 100% !important;
+            padding: 12px 24px !important;
+            border-radius: 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            cursor: pointer !important;
+            text-transform: uppercase !important;
+            font-size: 0.85rem !important;
+          }
+
+          .subcategory-card-premium:hover .vc-btn-vote {
+            background: linear-gradient(135deg, #e5c158 0%, #ffffff 50%, #fff0b8 100%) !important;
+            border-color: transparent !important;
+            box-shadow: 0 6px 22px rgba(212,175,55,0.55), inset 0 1px 0 rgba(255,255,255,0.4) !important;
+            color: #03081b !important;
+            transform: scale(1.02) !important;
+          }
+
+          .subcategory-title-premium {
+            font-size: 1.08rem !important;
+            font-weight: 700 !important;
+            background: linear-gradient(135deg, #ffffff 0%, #fffbeb 50%, #ffe89e 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            margin: 0 !important;
+            line-height: 1.5 !important;
+            text-align: left !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 3 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.8px !important;
+            font-family: "'Be Vietnam Pro', sans-serif" !important;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6)) !important;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          }
+          
+          .subcategory-card-premium:hover .subcategory-title-premium {
+            background: linear-gradient(135deg, #ffffff 0%, #ffeaa3 50%, #ffd700 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.45)) !important;
+            transform: translateX(3px) !important;
+          }
+          }
+        `}</style>
         <div className="container">
           <ScrollReveal>
             <div className="section-head" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -357,31 +587,64 @@ export default function Vote() {
                     }
                   }}
                 >
-                  {activeCategory.items.map((item) => (
-                    <motion.div 
-                      className="vote-category-card" 
-                      key={item.id}
-                      variants={{
-                        hidden: { opacity: 0, y: 30 },
-                        show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
-                      }}
-                      whileHover={{ y: -5 }}
-                    >
-                      <div className="vc-card-img">
-                        <img src={item.imageUrl || item.image || '/images/hero-collage.png'} alt={item.title} />
-                        <div className="vc-card-overlay"></div>
-                      </div>
-                      <div className="vc-card-content">
-                        <h4 className="vc-card-title">{isEn && item.titleEn ? item.titleEn : item.title}</h4>
-                        <button 
-                          className="btn btn-primary vc-btn-vote"
-                          onClick={() => setSelectedSub(item)}
-                        >
-                          ⭐ {t('vote.view_nominees')}
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
+                  {activeCategory.items.map((item) => {
+                    const titleText = isEn && item.titleEn ? item.titleEn : item.title;
+
+                    return (
+                      <motion.div 
+                        className="vote-category-card subcategory-card-premium" 
+                        key={item.id}
+                        variants={{
+                          hidden: { opacity: 0, y: 30 },
+                          show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+                        }}
+                        whileHover={{ y: -5 }}
+                      >
+                        {/* Soft gold decorative gradient glow on hover */}
+                        <div style={{
+                          position: 'absolute',
+                          top: '-50%',
+                          left: '-50%',
+                          width: '200%',
+                          height: '200%',
+                          background: 'radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%)',
+                          pointerEvents: 'none',
+                          zIndex: 1
+                        }} />
+
+                        {/* Top Section: Logo + Category Name */}
+                        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', zIndex: 2 }}>
+                          {/* Logo directly rendered & made larger */}
+                          <img 
+                            src="/images/Logo.png" 
+                            alt="VITA Award Logo" 
+                            className="logo-image-premium"
+                            style={{ 
+                              width: '64px', 
+                              height: '64px', 
+                              objectFit: 'contain',
+                              flexShrink: 0
+                            }}
+                          />
+
+                          {/* Category Name */}
+                          <h4 className="subcategory-title-premium">
+                            {titleText}
+                          </h4>
+                        </div>
+
+                        {/* Bottom Section: View Nominees Button */}
+                        <div style={{ width: '100%', marginTop: '20px', zIndex: 2, display: 'flex', justifyContent: 'center' }}>
+                          <button 
+                            className="btn btn-primary vc-btn-vote"
+                            onClick={() => setSelectedSub(item)}
+                          >
+                            ⭐ {t('vote.view_nominees')}
+                          </button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </motion.div>
               </>
             ) : (

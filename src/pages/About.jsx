@@ -14,9 +14,9 @@ const GOALS = [
         <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a4 4 0 0 0-4 4v6h8V6a4 4 0 0 0-4-4z" />
       </svg>
     ),
-    bold: 'Tôn vinh', boldEn: 'Honor',
-    text: 'các tổ chức, doanh nghiệp, địa phương và cá nhân tiêu biểu ngành du lịch',
-    textEn: 'outstanding organizations, enterprises, localities, and individuals in the tourism industry'
+    bold: 'Tạo động lực', boldEn: 'Create motivation',
+    text: 'cạnh tranh lành mạnh, nâng cao chất lượng dịch vụ và thương hiệu du lịch Việt Nam.',
+    textEn: 'for healthy competition, enhancing service quality and the Vietnam tourism brand.'
   },
   {
     icon: (
@@ -25,20 +25,9 @@ const GOALS = [
         <path d="m9 12 2 2 4-4" />
       </svg>
     ),
-    bold: 'Ghi nhận', boldEn: 'Recognize',
-    text: 'các mô hình phát triển du lịch chất lượng, sáng tạo và bền vững',
-    textEn: 'high-quality, creative, and sustainable tourism development models'
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--gold-400)' }}>
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20" />
-      </svg>
-    ),
-    bold: 'Lan tỏa', boldEn: 'Spread',
-    text: 'hình ảnh du lịch Việt Nam hiện đại, giàu bản sắc',
-    textEn: 'the image of a modern and culturally rich Vietnam tourism'
+    bold: 'Khuyến khích', boldEn: 'Encourage',
+    text: 'chuyển đổi số, du lịch xanh và phát triển bền vững.',
+    textEn: 'digital transformation, green tourism, and sustainable development.'
   },
   {
     icon: (
@@ -46,9 +35,9 @@ const GOALS = [
         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
       </svg>
     ),
-    bold: 'Kết nối', boldEn: 'Connect',
-    text: 'cộng đồng du lịch trên nền tảng truyền thông số',
-    textEn: 'the tourism community on a digital media platform'
+    bold: 'Xây dựng', boldEn: 'Build',
+    text: 'mạng lưới kết nối giữa doanh nghiệp, địa phương và đối tác chiến lược để quảng bá hình ảnh du lịch Việt Nam ra quốc tế.',
+    textEn: 'a connection network between enterprises, localities, and strategic partners to promote the image of Vietnam tourism internationally.'
   },
 ];
 
@@ -415,9 +404,9 @@ export default function About() {
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
                 {isEn ? (
-                  <><strong>VITA AWARD</strong> is the Vietnam Tourism Award hosted by the <strong>Vietnam Tourism Association (VITA)</strong>, in coordination with <span className="gold-text">Vietnam Travel</span> Magazine and strategic partners.</>
+                  <><strong>VITA Awards</strong> is a prestigious and noble award system of the Tourism industry, organized annually by the <strong style={{ whiteSpace: 'nowrap' }}>Vietnam Tourism Association (VITA)</strong>.</>
                 ) : (
-                  <><strong>VITA AWARD</strong> là Giải thưởng Du lịch Việt Nam do <strong>Hiệp hội Du lịch Việt Nam (VITA)</strong> chủ trì tổ chức, phối hợp cùng Tạp chí <span className="gold-text">Vietnam Travel</span> và các đối tác chiến lược triển khai.</>
+                  <><strong>VITA Awards</strong> là hệ thống giải thưởng uy tín, danh giá của ngành Du lịch<br />do <strong style={{ whiteSpace: 'nowrap' }}>Hiệp hội Du lịch Việt Nam (VITA)</strong> tổ chức thường niên.</>
                 )}
               </motion.p>
             </div>
